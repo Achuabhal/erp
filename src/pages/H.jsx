@@ -882,7 +882,8 @@ const AccessRights = () => {
 // --- MAIN APP COMPONENT --- //
 export default function App() {
     const [activeView, setActiveView] = useState('Dashboard');
-    const [isSidebarOpen, setSidebarOpen] = useState(false);
+    const [isSidebarOpen, setSidebarOpen] = useState(true);
+    const [dynamicStyle, setDynamicStyle] = useState({});
 
     const navItems = [
         { name: 'Dashboard', icon: icons.dashboard, component: <DepartmentControlPanel /> },
@@ -899,23 +900,46 @@ export default function App() {
         return activeItem ? activeItem.component : <DepartmentControlPanel />;
     };
     
-    // Set sidebar state based on screen size
+    // This useEffect hook applies CSS scaling to create a "zoomed-out" desktop view on smaller screens.
     useEffect(() => {
-        const handleResize = () => {
-             setSidebarOpen(window.innerWidth >= 768);
-        }
-        window.addEventListener('resize', handleResize);
-        handleResize();
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
+        const DESKTOP_WIDTH = 1440; // The target width the layout is designed for.
+
+        const updateScale = () => {
+            const screenWidth = window.innerWidth;
+            
+            if (screenWidth < DESKTOP_WIDTH) {
+                const scale = screenWidth / DESKTOP_WIDTH;
+                setDynamicStyle({
+                    minWidth: `${DESKTOP_WIDTH}px`,
+                    transform: `scale(${scale})`,
+                    transformOrigin: 'top left',
+                    height: `calc(100vh / ${scale})`, // Adjust height to prevent excessive empty space
+                    overflow: 'hidden', // Hide the overflow caused by scaling
+                });
+            } else {
+                // On larger screens, use default styles.
+                setDynamicStyle({
+                    minWidth: `${DESKTOP_WIDTH}px`,
+                    height: '100vh',
+                });
+            }
+        };
+
+        // Run on initial load
+        updateScale();
+
+        // Add event listener for window resizing
+        window.addEventListener('resize', updateScale);
+
+        // Cleanup function to remove the event listener
+        return () => window.removeEventListener('resize', updateScale);
+    }, []); // Empty dependency array ensures this effect runs only on mount and unmount.
+
 
     return (
-        <div className="bg-gray-100 h-screen flex overflow-hidden">
-            {/* Backdrop for mobile sidebar */}
-            {isSidebarOpen && window.innerWidth < 768 && <div className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden" onClick={() => setSidebarOpen(false)}></div>}
-
+        <div className="bg-gray-100 flex" style={dynamicStyle}>
             {/* Sidebar */}
-            <aside className={`bg-white text-gray-800 flex flex-col w-64 h-full shadow-lg z-40 fixed md:relative transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 md:${isSidebarOpen ? 'w-64' : 'w-20'}`}>
+            <aside className={`bg-white text-gray-800 flex flex-col h-full shadow-lg relative transition-all duration-300 ease-in-out ${isSidebarOpen ? 'w-64' : 'w-20'}`}>
                 <div className={`flex items-center h-20 border-b border-gray-200 ${isSidebarOpen ? 'justify-start px-6' : 'justify-center'}`}>
                      {isSidebarOpen ? (
                         <h1 className="text-2xl font-bold text-indigo-600">HOD Panel</h1>
@@ -932,9 +956,6 @@ export default function App() {
                                     onClick={(e) => {
                                         e.preventDefault();
                                         setActiveView(item.name);
-                                        if (window.innerWidth < 768) {
-                                            setSidebarOpen(false);
-                                        }
                                     }}
                                     className={`flex items-center py-3 rounded-lg transition-colors duration-200 ${isSidebarOpen ? 'px-4' : 'justify-center'} ${activeView === item.name ? 'bg-indigo-100 text-indigo-600' : 'text-gray-600 hover:bg-gray-100'}`}
                                 >
