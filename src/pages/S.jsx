@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import { Home, BookOpen, DollarSign, User, Bot, Briefcase, Calendar, MessageSquare, FileText, ChevronLeft, ChevronRight, Bell, Search, Menu, X, Upload, Download, Paperclip, Send, Star, ThumbsUp, ThumbsDown, ChevronsUpDown, AlertTriangle, Info, ToggleLeft, ToggleRight } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { Home, BookOpen, DollarSign, User, Bot, Briefcase, Calendar, MessageSquare, FileText, ChevronLeft, ChevronRight, Bell, Search, Menu, Upload, Download, ThumbsUp, ThumbsDown, AlertTriangle, ToggleLeft, ToggleRight, Send } from 'lucide-react';
 
 // Mock Data
 const studentData = {
@@ -119,17 +119,17 @@ const StatusChip = ({ status }) => {
 // Main Module Components
 const DashboardOverview = () => (
     <div className="space-y-8">
-        <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-8 rounded-xl shadow-lg">
+        <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-6 md:p-8 rounded-xl shadow-lg">
             <div className="flex items-center space-x-4">
-                <img src={studentData.profilePic} alt="Profile" className="w-20 h-20 rounded-full border-4 border-white" />
+                <img src={studentData.profilePic} alt="Profile" className="w-16 h-16 md:w-20 md:h-20 rounded-full border-4 border-white" />
                 <div>
-                    <h1 className="text-3xl font-bold">Welcome back, {studentData.name.split(' ')[0]}!</h1>
+                    <h1 className="text-2xl md:text-3xl font-bold">Welcome back, {studentData.name.split(' ')[0]}!</h1>
                     <p className="text-blue-100">{studentData.department}</p>
                 </div>
             </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
             <StatCard icon={<BarChart size={24} className="text-green-600" />} title="Attendance" value={`${studentData.stats.attendance}%`} color="bg-green-100" />
             <StatCard icon={<FileText size={24} className="text-blue-600" />} title="Latest Results" value={studentData.stats.latestResult} color="bg-blue-100" />
             <StatCard icon={<DollarSign size={24} className="text-red-600" />} title="Fee Due" value={financeDetails.due > 0 ? `₹${financeDetails.due.toLocaleString()}` : 'None'} color={financeDetails.due > 0 ? "bg-red-100" : "bg-green-100"} />
@@ -170,12 +170,12 @@ const Academics = () => {
 
     return (
         <div className="space-y-6">
-            <div className="flex border-b">
+            <div className="flex border-b overflow-x-auto">
                 {tabs.map(tab => (
                     <button
                         key={tab}
                         onClick={() => setActiveTab(tab)}
-                        className={`py-2 px-4 text-sm font-medium transition-colors ${activeTab === tab ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+                        className={`py-2 px-4 text-sm font-medium transition-colors whitespace-nowrap ${activeTab === tab ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
                     >
                         {tab}
                     </button>
@@ -220,7 +220,7 @@ const TimetableViewer = () => {
             )}
             {view === 'Week' && (
                 <div className="overflow-x-auto">
-                    <table className="w-full text-left">
+                    <table className="w-full text-left min-w-[600px]">
                         <thead>
                             <tr className="bg-gray-50">
                                 <th className="p-3 text-sm font-semibold text-gray-600">Day</th>
@@ -335,12 +335,12 @@ const MarksAndGrades = () => {
                     </div>
                 )}
             </div>
-            <div className="flex border-b mb-4">
+            <div className="flex border-b mb-4 overflow-x-auto">
                 {tabs.map(tab => (
                     <button
                         key={tab}
                         onClick={() => setActiveTab(tab)}
-                        className={`py-2 px-4 text-sm font-medium transition-colors ${activeTab === tab ? 'border-b-2 border-purple-500 text-purple-600' : 'text-gray-500 hover:text-gray-700'}`}
+                        className={`py-2 px-4 text-sm font-medium transition-colors whitespace-nowrap ${activeTab === tab ? 'border-b-2 border-purple-500 text-purple-600' : 'text-gray-500 hover:text-gray-700'}`}
                     >
                         {tab}
                     </button>
@@ -349,7 +349,7 @@ const MarksAndGrades = () => {
 
             {activeTab === 'Results' ? (
                 <div className="overflow-x-auto">
-                    <table className="w-full text-left">
+                    <table className="w-full text-left min-w-[500px]">
                         <thead>
                             <tr className="bg-gray-50">
                                 <th className="p-3 text-sm font-semibold text-gray-600">Subject</th>
@@ -626,7 +626,7 @@ const CVAnalyzer = () => {
 };
 
 const StudyBot = () => (
-    <Card className="h-[60vh] flex flex-col">
+    <Card className="flex flex-col" style={{height: '65vh'}}>
         <h2 className="text-xl font-bold text-gray-800 mb-4">Study Bot</h2>
         <div className="flex-grow bg-gray-50 rounded-lg p-4 space-y-4 overflow-y-auto">
             <div className="flex justify-start"><div className="bg-white p-3 rounded-lg max-w-xs shadow-sm">Hello! How can I help you with your studies today?</div></div>
@@ -645,7 +645,7 @@ const PlacementPrepBot = () => (
         <div className="p-6 border rounded-xl bg-gray-50">
             <p className="text-gray-500 text-center mb-2">Aptitude Question</p>
             <p className="text-lg text-gray-800 text-center">If a train 110 meters long passes a telegraph pole in 3 seconds, then the time taken by it to cross a railway platform 165 meters long is:</p>
-            <div className="grid grid-cols-2 gap-4 mt-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
                 <button className="p-3 border rounded-lg hover:bg-gray-100">7.5 seconds</button>
                 <button className="p-3 border rounded-lg hover:bg-gray-100">10 seconds</button>
                 <button className="p-3 border rounded-lg hover:bg-gray-100">12.5 seconds</button>
@@ -707,10 +707,10 @@ const CalendarAndEvents = () => {
         <Card>
             <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
                 <h2 className="text-xl font-bold text-gray-800">Calendar & Events</h2>
-                <button className="flex items-center space-x-2 px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition-colors group">
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fillRule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 6a.75.75 0 00-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 000-1.5h-3.75V6z" clipRule="evenodd" /></svg>
-                    <span>Sync with Google Calendar</span>
-                    <span className="absolute -top-10 left-1/2 -translate-x-1/2 w-max px-2 py-1 bg-gray-900 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity">Sync exams and deadlines</span>
+                <button className="flex items-center space-x-2 px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition-colors group relative">
+                    <Calendar className="w-5 h-5" />
+                    <span>Sync Calendar</span>
+                    <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-max px-2 py-1 bg-gray-900 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity">Sync exams and deadlines</span>
                 </button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -806,6 +806,38 @@ export default function App() {
     const [activePage, setActivePage] = useState('Dashboard');
     const [isSidebarOpen, setSidebarOpen] = useState(true);
     const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [style, setStyle] = useState({});
+
+    // This effect handles the scaling of the app for mobile views.
+    useEffect(() => {
+        const handleResize = () => {
+            const desktopWidth = 1440; // The target width the app was designed for.
+            const screenWidth = window.innerWidth;
+
+            if (screenWidth < desktopWidth) {
+                const scale = screenWidth / desktopWidth;
+                setStyle({
+                    transform: `scale(${scale})`,
+                    transformOrigin: 'top left',
+                    width: `${desktopWidth}px`,
+                    height: `calc(100vh / ${scale})`, // Adjust height to fill viewport after scaling
+                    overflow: 'auto' // Add scroll for scaled content
+                });
+            } else {
+                setStyle({}); // Reset styles on larger screens
+            }
+        };
+
+        // Set initial scale
+        handleResize();
+
+        // Add event listener for window resize
+        window.addEventListener('resize', handleResize);
+
+        // Cleanup event listener on component unmount
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
 
     const menuItems = [
         { name: 'Dashboard', icon: <Home size={20} /> },
@@ -836,13 +868,12 @@ export default function App() {
 
     const Sidebar = ({ items }) => (
         <aside className={`bg-white shadow-sm h-full flex flex-col transition-all duration-300 ${isSidebarOpen ? 'w-64' : 'w-20'}`}>
-            <div className={`flex items-center justify-between p-4 border-b h-16 ${isSidebarOpen ? '' : 'justify-center'}`}>
+            <div className={`flex items-center justify-between p-4 border-b h-16 flex-shrink-0 ${isSidebarOpen ? '' : 'justify-center'}`}>
                 {isSidebarOpen && <h1 className="text-xl font-bold text-blue-600">Student ERP</h1>}
                 <button onClick={() => setSidebarOpen(!isSidebarOpen)} className="p-1 rounded-full hover:bg-gray-100 hidden lg:block">
                     {isSidebarOpen ? <ChevronLeft /> : <ChevronRight />}
                 </button>
             </div>
-            {/* FIXED: Added overflow-y-auto for scrollability on smaller screens */}
             <nav className="flex-grow p-2 space-y-1 overflow-y-auto">
                 {items.map(item => (
                     <button
@@ -854,7 +885,7 @@ export default function App() {
                         className={`w-full flex items-center space-x-3 p-3 rounded-lg transition-colors ${activePage === item.name ? 'bg-blue-500 text-white shadow-md' : 'text-gray-600 hover:bg-gray-100'} ${isSidebarOpen ? '' : 'justify-center'}`}
                     >
                         {item.icon}
-                        {isSidebarOpen && <span>{item.name}</span>}
+                        {isSidebarOpen && <span className="truncate">{item.name}</span>}
                     </button>
                 ))}
             </nav>
@@ -862,54 +893,58 @@ export default function App() {
     );
 
     return (
-        <div className="flex h-screen bg-gray-50 font-sans">
-            {/* Desktop Sidebar */}
-            <div className="hidden lg:block">
-               <Sidebar items={menuItems} />
-            </div>
-
-            {/* Mobile Sidebar */}
-            <div className={`fixed inset-0 z-40 flex lg:hidden ${isMobileMenuOpen ? "" : "pointer-events-none"}`}>
-                <div className={`relative w-64 h-full bg-white shadow-xl flex flex-col transition-transform duration-300 ease-in-out ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-                    <Sidebar items={menuItems} />
+        <div style={style} className="bg-gray-50 font-sans">
+            <div className="flex min-h-screen">
+                {/* Desktop Sidebar */}
+                <div className="hidden lg:block flex-shrink-0">
+                   <Sidebar items={menuItems} />
                 </div>
-                {isMobileMenuOpen && (
-                    <div
-                        className="flex-1 bg-black bg-opacity-50"
-                        onClick={() => setMobileMenuOpen(false)}
-                    ></div>
-                )}
-            </div>
 
-
-            <div className="flex-1 flex flex-col overflow-hidden">
-                <header className="flex items-center justify-between p-4 bg-white border-b h-16">
-                    <div className="flex items-center">
-                        <button onClick={() => setMobileMenuOpen(true)} className="lg:hidden mr-4 p-2 rounded-md hover:bg-gray-100">
-                           <Menu />
-                        </button>
-                        <div className="relative hidden md:block">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-                            <input type="text" placeholder="Search..." className="pl-10 pr-4 py-2 w-64 border rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                        </div>
+                {/* Mobile Sidebar */}
+                <div className={`fixed inset-0 z-40 flex lg:hidden ${isMobileMenuOpen ? "" : "pointer-events-none"}`}>
+                    <div className={`relative w-64 h-full bg-white shadow-xl flex flex-col transition-transform duration-300 ease-in-out ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+                        <Sidebar items={menuItems} />
                     </div>
-                    <div className="flex items-center space-x-4">
-                        <button className="p-2 rounded-full hover:bg-gray-100">
-                            <Bell />
-                        </button>
-                        <div className="flex items-center space-x-2">
-                             <img src={studentData.profilePic} alt="Profile" className="w-10 h-10 rounded-full" />
-                             <div className="hidden md:block">
-                                <p className="text-sm font-semibold text-gray-800">{studentData.name}</p>
-                                <p className="text-xs text-gray-500">{studentData.department.split(' ')[0]} Engg.</p>
-                             </div>
-                        </div>
-                    </div>
-                </header>
+                    {isMobileMenuOpen && (
+                        <div
+                            className="flex-1 bg-black bg-opacity-50"
+                            onClick={() => setMobileMenuOpen(false)}
+                        ></div>
+                    )}
+                </div>
 
-                <main className="flex-1 overflow-x-hidden overflow-y-auto p-6 md:p-8">
-                    {renderPage()}
-                </main>
+                {/* Main content area */}
+                <div className="flex-1 flex flex-col min-w-0">
+                    {/* Header */}
+                    <header className="flex-shrink-0 flex items-center justify-between p-4 bg-white border-b h-16">
+                        <div className="flex items-center">
+                            <button onClick={() => setMobileMenuOpen(true)} className="lg:hidden mr-4 p-2 rounded-md hover:bg-gray-100">
+                               <Menu />
+                            </button>
+                            <div className="relative hidden md:block">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                                <input type="text" placeholder="Search..." className="pl-10 pr-4 py-2 w-64 border rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                            </div>
+                        </div>
+                        <div className="flex items-center space-x-4">
+                            <button className="p-2 rounded-full hover:bg-gray-100">
+                                <Bell />
+                            </button>
+                            <div className="flex items-center space-x-2">
+                                 <img src={studentData.profilePic} alt="Profile" className="w-10 h-10 rounded-full" />
+                                 <div className="hidden md:block">
+                                    <p className="text-sm font-semibold text-gray-800">{studentData.name}</p>
+                                    <p className="text-xs text-gray-500">{studentData.department.split(' ')[0]} Engg.</p>
+                                 </div>
+                            </div>
+                        </div>
+                    </header>
+
+                    {/* Scrollable content */}
+                    <main className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8">
+                        {renderPage()}
+                    </main>
+                </div>
             </div>
         </div>
     );
