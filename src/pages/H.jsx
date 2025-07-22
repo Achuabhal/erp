@@ -92,12 +92,13 @@ const icons = {
     check: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>,
     x: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>,
     upload: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>,
+    loader: <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>,
 };
 
 
 // --- REUSABLE COMPONENTS --- //
 const Card = ({ title, children, className }) => (
-    <div className={`bg-white rounded-xl shadow-md p-6 ${className}`}>
+    <div className={`bg-white rounded-xl shadow-md p-4 md:p-6 ${className}`}>
         <h3 className="text-xl font-semibold text-gray-800 mb-4">{title}</h3>
         {children}
     </div>
@@ -114,6 +115,20 @@ const TooltipButton = ({ children, tooltip, onClick, className }) => (
     </div>
 );
 
+const Modal = ({ title, content, onClose }) => (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-lg">
+            <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-bold text-gray-800">{title}</h3>
+                <button onClick={onClose} className="text-gray-500 hover:text-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div className="text-gray-600 whitespace-pre-wrap">{content}</div>
+        </div>
+    </div>
+);
+
 
 // --- PAGE COMPONENTS --- //
 const DepartmentControlPanel = () => {
@@ -126,22 +141,22 @@ const DepartmentControlPanel = () => {
                         <table className="w-full text-sm text-left text-gray-500">
                             <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                                 <tr>
-                                    <th scope="col" className="px-6 py-3">Faculty</th>
-                                    <th scope="col" className="px-6 py-3">Primary Subject</th>
-                                    <th scope="col" className="px-6 py-3">Workload (hrs/wk)</th>
-                                    <th scope="col" className="px-6 py-3">Status</th>
+                                    <th scope="col" className="px-4 py-3 md:px-6">Faculty</th>
+                                    <th scope="col" className="px-4 py-3 md:px-6">Primary Subject</th>
+                                    <th scope="col" className="px-4 py-3 md:px-6">Workload</th>
+                                    <th scope="col" className="px-4 py-3 md:px-6">Status</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {facultyData.map(f => (
                                     <tr key={f.id} className="bg-white border-b hover:bg-gray-50">
-                                        <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap flex items-center">
+                                        <td className="px-4 py-3 md:px-6 font-medium text-gray-900 whitespace-nowrap flex items-center">
                                             <img className="w-10 h-10 rounded-full mr-4" src={f.photo} alt={f.name} />
                                             {f.name}
                                         </td>
-                                        <td className="px-6 py-4">{f.subject}</td>
-                                        <td className="px-6 py-4">{f.workload}</td>
-                                        <td className="px-6 py-4">
+                                        <td className="px-4 py-3 md:px-6">{f.subject}</td>
+                                        <td className="px-4 py-3 md:px-6">{f.workload}</td>
+                                        <td className="px-4 py-3 md:px-6">
                                             <span className={`px-2 py-1 text-xs font-medium rounded-full ${f.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
                                                 {f.status}
                                             </span>
@@ -196,12 +211,12 @@ const DepartmentControlPanel = () => {
                 <Card title="Approval Queue: Schedule Changes">
                     <ul className="divide-y divide-gray-200">
                         {scheduleApprovals.map(req => (
-                            <li key={req.id} className="py-4 flex items-center justify-between">
-                                <div>
+                            <li key={req.id} className="py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between">
+                                <div className="mb-2 sm:mb-0">
                                     <p className="text-sm font-medium text-gray-900">{req.faculty}</p>
                                     <p className="text-sm text-gray-500">{req.request}</p>
                                 </div>
-                                <div className="flex items-center space-x-2">
+                                <div className="flex items-center space-x-2 flex-shrink-0">
                                     <TooltipButton tooltip="Approve Request" className="p-2 bg-green-100 text-green-700 rounded-full hover:bg-green-200">{icons.check}</TooltipButton>
                                     <TooltipButton tooltip="Reject Request" className="p-2 bg-red-100 text-red-700 rounded-full hover:bg-red-200">{icons.x}</TooltipButton>
                                 </div>
@@ -230,7 +245,7 @@ const TimetableAndPlanning = () => {
     return (
         <div className="space-y-6">
             {showClashModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
                     <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
                         <h3 className="text-lg font-bold text-red-600">Clash Detected!</h3>
                         <p className="mt-2 text-gray-600">Dr. Samuel Grant is already assigned to 'CHE102' at this time slot.</p>
@@ -254,9 +269,9 @@ const TimetableAndPlanning = () => {
                                 <tr key={slot}>
                                     <td className="border border-gray-300 p-2 font-semibold bg-gray-50">{slot}</td>
                                     {days.map(day => (
-                                        <td key={`${day}-${slot}`} className="border border-gray-300 p-2 h-20 text-center relative group">
+                                        <td key={`${day}-${slot}`} className="border border-gray-300 p-1 md:p-2 h-20 text-center relative group">
                                             {schedule[day]?.[slot] ? (
-                                                <div className="bg-indigo-100 text-indigo-800 p-2 rounded-md h-full flex items-center justify-center cursor-move">
+                                                <div className="bg-indigo-100 text-indigo-800 text-xs md:text-sm p-1 md:p-2 rounded-md h-full flex items-center justify-center cursor-move">
                                                     {schedule[day][slot]}
                                                 </div>
                                             ) : (
@@ -300,10 +315,10 @@ const TimetableAndPlanning = () => {
                             <h4 className="font-semibold">October 2024</h4>
                             <button className="text-gray-600">&gt;</button>
                         </div>
-                        <div className="grid grid-cols-7 text-center text-sm text-gray-500">
+                        <div className="grid grid-cols-7 text-center text-xs md:text-sm text-gray-500">
                             <div className="font-semibold">Su</div><div className="font-semibold">Mo</div><div className="font-semibold">Tu</div><div className="font-semibold">We</div><div className="font-semibold">Th</div><div className="font-semibold">Fr</div><div className="font-semibold">Sa</div>
                             {Array.from({length: 31}, (_, i) => i + 1).map(day => (
-                                <div key={day} className={`p-2 rounded-full relative ${day === 18 ? 'bg-indigo-500 text-white' : ''} ${day === 25 ? 'bg-purple-200' : ''}`}>
+                                <div key={day} className={`p-1 md:p-2 rounded-full relative ${day === 18 ? 'bg-indigo-500 text-white' : ''} ${day === 25 ? 'bg-purple-200' : ''}`}>
                                     {day}
                                     {day === 25 && <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-purple-600 rounded-full"></div>}
                                 </div>
@@ -332,29 +347,29 @@ const DepartmentAnalytics = () => {
 
     return (
         <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div className="bg-white p-5 rounded-xl shadow-md flex items-center space-x-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="bg-white p-4 rounded-xl shadow-md flex items-center space-x-4">
                     <div className="bg-blue-100 p-3 rounded-full"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/></svg></div>
                     <div>
                         <p className="text-sm text-gray-500">Avg. Attendance</p>
                         <p className="text-2xl font-bold text-gray-800">90.5%</p>
                     </div>
                 </div>
-                 <div className="bg-white p-5 rounded-xl shadow-md flex items-center space-x-4">
+                 <div className="bg-white p-4 rounded-xl shadow-md flex items-center space-x-4">
                     <div className="bg-green-100 p-3 rounded-full"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></div>
                     <div>
                         <p className="text-sm text-gray-500">Avg. Marks</p>
                         <p className="text-2xl font-bold text-gray-800">79.8</p>
                     </div>
                 </div>
-                 <div className="bg-white p-5 rounded-xl shadow-md flex items-center space-x-4">
+                 <div className="bg-white p-4 rounded-xl shadow-md flex items-center space-x-4">
                     <div className="bg-yellow-100 p-3 rounded-full"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
                     <div>
                         <p className="text-sm text-gray-500">Faculty Count</p>
                         <p className="text-2xl font-bold text-gray-800">{facultyData.length}</p>
                     </div>
                 </div>
-                 <div className="bg-white p-5 rounded-xl shadow-md flex items-center space-x-4">
+                 <div className="bg-white p-4 rounded-xl shadow-md flex items-center space-x-4">
                     <div className="bg-purple-100 p-3 rounded-full"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg></div>
                     <div>
                         <p className="text-sm text-gray-500">Placements '24</p>
@@ -400,20 +415,20 @@ const DepartmentAnalytics = () => {
                     <table className="w-full text-sm text-center">
                         <thead>
                             <tr className="bg-gray-50">
-                                <th className="p-3 font-semibold text-left">Batch / Subject</th>
-                                {uniqueSubjects.map(s => <th key={s} className="p-3 font-semibold">{s}</th>)}
+                                <th className="p-2 md:p-3 font-semibold text-left">Batch / Subject</th>
+                                {uniqueSubjects.map(s => <th key={s} className="p-2 md:p-3 font-semibold">{s}</th>)}
                             </tr>
                         </thead>
                         <tbody>
                             {uniqueBatches.map(batch => (
                                 <tr key={batch} className="border-b">
-                                    <td className="p-3 font-semibold text-left">{batch}</td>
+                                    <td className="p-2 md:p-3 font-semibold text-left">{batch}</td>
                                     {uniqueSubjects.map(subject => {
                                         const item = departmentKPIs.batchPerformance.find(p => p.batch === batch && p.subject === subject);
                                         return (
-                                            <td key={`${batch}-${subject}`} className="p-3">
+                                            <td key={`${batch}-${subject}`} className="p-2 md:p-3">
                                                 {item ? (
-                                                    <span className={`px-3 py-1 font-bold rounded-md ${getPerformanceColor(item.score)}`}>
+                                                    <span className={`px-2 py-1 md:px-3 font-bold text-xs md:text-sm rounded-md ${getPerformanceColor(item.score)}`}>
                                                         {item.score}
                                                     </span>
                                                 ) : (
@@ -504,19 +519,19 @@ const DocumentsAndCompliance = () => {
                     <table className="w-full text-sm text-left text-gray-500">
                         <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                             <tr>
-                                <th className="px-6 py-3">Document Name</th>
-                                <th className="px-6 py-3">Type</th>
-                                <th className="px-6 py-3">Version</th>
-                                <th className="px-6 py-3">Last Updated</th>
+                                <th className="px-4 py-3 md:px-6">Document Name</th>
+                                <th className="px-4 py-3 md:px-6">Type</th>
+                                <th className="px-4 py-3 md:px-6">Version</th>
+                                <th className="px-4 py-3 md:px-6">Last Updated</th>
                             </tr>
                         </thead>
                         <tbody>
                             {documentsData.map(doc => (
                                 <tr key={doc.id} className="bg-white border-b hover:bg-gray-50">
-                                    <td className="px-6 py-4 font-medium text-indigo-600 hover:underline cursor-pointer">{doc.name}</td>
-                                    <td className="px-6 py-4">{doc.type}</td>
-                                    <td className="px-6 py-4">{doc.version}</td>
-                                    <td className="px-6 py-4">{doc.date}</td>
+                                    <td className="px-4 py-3 md:px-6 font-medium text-indigo-600 hover:underline cursor-pointer">{doc.name}</td>
+                                    <td className="px-4 py-3 md:px-6">{doc.type}</td>
+                                    <td className="px-4 py-3 md:px-6">{doc.version}</td>
+                                    <td className="px-4 py-3 md:px-6">{doc.date}</td>
                                 </tr>
                             ))}
                         </tbody>
@@ -526,12 +541,12 @@ const DocumentsAndCompliance = () => {
             <Card title="Approval Queue: Academic Reports from Teachers">
                 <ul className="divide-y divide-gray-200">
                     {academicReportsQueue.map(req => (
-                        <li key={req.id} className="py-4 flex items-center justify-between">
-                            <div>
+                        <li key={req.id} className="py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between">
+                            <div className="mb-2 sm:mb-0">
                                 <p className="text-sm font-medium text-gray-900">{req.report}</p>
                                 <p className="text-sm text-gray-500">Submitted by {req.faculty} on {req.date}</p>
                             </div>
-                            <div className="flex items-center space-x-2">
+                            <div className="flex items-center space-x-2 flex-shrink-0">
                                 <TooltipButton tooltip="Approve Report" className="p-2 bg-green-100 text-green-700 rounded-full hover:bg-green-200">{icons.check}</TooltipButton>
                                 <TooltipButton tooltip="Reject Report" className="p-2 bg-red-100 text-red-700 rounded-full hover:bg-red-200">{icons.x}</TooltipButton>
                             </div>
@@ -544,39 +559,115 @@ const DocumentsAndCompliance = () => {
 };
 
 const AITools = () => {
+    const [isLoading, setIsLoading] = useState({ plan: null, workload: false });
+    const [modalInfo, setModalInfo] = useState({ isOpen: false, title: '', content: '' });
+    const [optimizedWorkload, setOptimizedWorkload] = useState(null);
+
+    const handleSuggestIntervention = async (student) => {
+        setIsLoading(prevState => ({ ...prevState, plan: student.id }));
+        const prompt = `Generate a concise, actionable intervention plan for a college student named ${student.name}. The student is at high risk of dropping out.
+        - Current Attendance: ${student.attendance}%
+        - Current Average Marks: ${student.marks}
+        The plan should be a list of 3-4 concrete steps a Head of Department can take to help the student. Format it as a list.`;
+
+        try {
+            const chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
+            const payload = { contents: chatHistory };
+            const apiKey = ""; 
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const result = await response.json();
+            if (result.candidates && result.candidates.length > 0) {
+                const text = result.candidates[0].content.parts[0].text;
+                setModalInfo({ isOpen: true, title: `Intervention Plan for ${student.name}`, content: text });
+            } else {
+                setModalInfo({ isOpen: true, title: 'Error', content: 'Could not generate a plan. Please try again.' });
+            }
+        } catch (error) {
+            console.error("Error fetching intervention plan:", error);
+            setModalInfo({ isOpen: true, title: 'Error', content: 'An error occurred while contacting the AI service.' });
+        } finally {
+            setIsLoading(prevState => ({ ...prevState, plan: null }));
+        }
+    };
+
+    const handleOptimizeWorkload = async () => {
+        setIsLoading(prevState => ({ ...prevState, workload: true }));
+        setOptimizedWorkload(null);
+        const prompt = `I have a list of faculty with their current teaching workloads in hours per week. The ideal workload is between 18-20 hours. Please analyze the following data and suggest a more balanced distribution. Provide the output ONLY as a JSON array of objects, where each object has "id", "name", and "suggestedWorkload" keys.
+
+Current Data: ${JSON.stringify(facultyData.map(f => ({id: f.id, name: f.name, workload: f.workload})))}
+`;
+        try {
+            const chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
+            const payload = {
+                contents: chatHistory,
+                generationConfig: {
+                    responseMimeType: "application/json",
+                }
+            };
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const result = await response.json();
+            if (result.candidates && result.candidates.length > 0) {
+                const jsonText = result.candidates[0].content.parts[0].text;
+                const parsedJson = JSON.parse(jsonText);
+                setOptimizedWorkload(parsedJson);
+            } else {
+                 setModalInfo({ isOpen: true, title: 'Error', content: 'Could not generate an optimized plan. The AI returned an empty response.' });
+            }
+        } catch (error) {
+            console.error("Error fetching optimized workload:", error);
+            setModalInfo({ isOpen: true, title: 'Error', content: 'An error occurred while processing the AI response. It might not be valid JSON.' });
+        } finally {
+            setIsLoading(prevState => ({ ...prevState, workload: false }));
+        }
+    };
+
     return (
         <div className="space-y-6">
+            {modalInfo.isOpen && <Modal title={modalInfo.title} content={modalInfo.content} onClose={() => setModalInfo({ isOpen: false, title: '', content: '' })} />}
+            
             <Card title="AI-Powered Tools">
                 <p className="text-gray-600">Leverage AI to optimize department operations and support student success.</p>
             </Card>
+
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <Card title="Teaching Load Optimizer">
-                    <p className="text-sm text-gray-500 mb-4">AI suggestions for balancing faculty workload. Red indicates overload, green indicates optimal.</p>
+                    <p className="text-sm text-gray-500 mb-4">AI suggestions for balancing faculty workload.</p>
+                    <button onClick={handleOptimizeWorkload} disabled={isLoading.workload} className="w-full mb-4 bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700 disabled:bg-indigo-400 flex items-center justify-center">
+                        {isLoading.workload ? icons.loader : '✨ Optimize Workload with AI'}
+                    </button>
                     <ul className="space-y-3">
-                        {facultyData.map(f => (
-                            <li key={f.id} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                                <div>
-                                    <p className="font-semibold">{f.name}</p>
-                                    <p className="text-sm text-gray-600">Current: {f.workload} hrs/wk</p>
-                                </div>
-                                {f.workload > 20 ? (
-                                    <div className="text-right">
-                                        <p className="font-bold text-red-500">Overloaded</p>
-                                        <p className="text-xs text-red-400">Suggest: Reduce by {f.workload - 20} hrs</p>
+                        {facultyData.map(f => {
+                            const suggestion = optimizedWorkload?.find(opt => opt.id === f.id);
+                            const change = suggestion ? suggestion.suggestedWorkload - f.workload : 0;
+                            return (
+                                <li key={f.id} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                                    <div>
+                                        <p className="font-semibold">{f.name}</p>
+                                        <p className="text-sm text-gray-600">Current: {f.workload} hrs/wk</p>
                                     </div>
-                                ) : f.workload < 18 ? (
-                                    <div className="text-right">
-                                        <p className="font-bold text-yellow-500">Underloaded</p>
-                                        <p className="text-xs text-yellow-400">Suggest: Increase by {18 - f.workload} hrs</p>
-                                    </div>
-                                ) : (
-                                    <div className="text-right">
-                                        <p className="font-bold text-green-500">Balanced</p>
-                                        <p className="text-xs text-green-400">Optimal Load</p>
-                                    </div>
-                                )}
-                            </li>
-                        ))}
+                                    {suggestion && (
+                                        <div className="text-right">
+                                            <p className="font-bold text-indigo-600">Suggested: {suggestion.suggestedWorkload} hrs</p>
+                                            <p className={`text-xs font-semibold ${change > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                                {change > 0 ? `+${change}` : change} hrs
+                                            </p>
+                                        </div>
+                                    )}
+                                </li>
+                            );
+                        })}
                     </ul>
                 </Card>
 
@@ -587,21 +678,23 @@ const AITools = () => {
                             <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                                 <tr>
                                     <th className="px-4 py-3">Student</th>
-                                    <th className="px-4 py-3">Attendance</th>
-                                    <th className="px-4 py-3">Avg. Marks</th>
-                                    <th className="px-4 py-3">Risk Level</th>
+                                    <th className="px-4 py-3">Risk</th>
+                                    <th className="px-4 py-3">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {studentsAtRisk.map(s => (
                                     <tr key={s.id} className="border-b hover:bg-gray-50">
                                         <td className="px-4 py-3 font-medium">{s.name}</td>
-                                        <td className="px-4 py-3">{s.attendance}%</td>
-                                        <td className="px-4 py-3">{s.marks}</td>
                                         <td className="px-4 py-3">
                                             <span className={`px-2 py-1 font-semibold text-xs rounded-full ${s.risk === 'High' ? 'bg-red-200 text-red-800' : s.risk === 'Medium' ? 'bg-yellow-200 text-yellow-800' : 'bg-green-200 text-green-800'}`}>
                                                 {s.risk}
                                             </span>
+                                        </td>
+                                        <td className="px-4 py-3">
+                                            <button onClick={() => handleSuggestIntervention(s)} disabled={isLoading.plan === s.id} className="bg-purple-600 text-white font-semibold text-xs py-1 px-3 rounded-lg hover:bg-purple-700 disabled:bg-purple-400 flex items-center justify-center">
+                                                {isLoading.plan === s.id ? <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> : '✨ Suggest Plan'}
+                                            </button>
                                         </td>
                                     </tr>
                                 ))}
@@ -609,32 +702,73 @@ const AITools = () => {
                         </table>
                     </div>
                 </Card>
-                
-                <div className="lg:col-span-2">
-                    <Card title="Auto Report Generator">
-                        <p className="text-sm text-gray-500 mb-4">Generate formatted PDF reports for accreditations like NAAC/NBA with a single click.</p>
-                        <div className="flex flex-wrap gap-4">
-                            <button className="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700 flex items-center space-x-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                                <span>Generate NAAC Report</span>
-                            </button>
-                             <button className="bg-purple-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-purple-700 flex items-center space-x-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                                <span>Generate NBA Report</span>
-                            </button>
-                        </div>
-                    </Card>
-                </div>
             </div>
         </div>
     );
 };
 
 const CommunicationTools = () => {
+    const [announcementKeywords, setAnnouncementKeywords] = useState('');
+    const [generatedAnnouncement, setGeneratedAnnouncement] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleGenerateAnnouncement = async () => {
+        if (!announcementKeywords) return;
+        setIsLoading(true);
+        setGeneratedAnnouncement('');
+        const prompt = `You are an academic administrator. Write a professional, clear, and concise announcement for a college department based on the following keywords. The announcement should be ready to be sent to students or faculty.
+
+Keywords: "${announcementKeywords}"`;
+
+        try {
+            const chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
+            const payload = { contents: chatHistory };
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const result = await response.json();
+            if (result.candidates && result.candidates.length > 0) {
+                const text = result.candidates[0].content.parts[0].text;
+                setGeneratedAnnouncement(text);
+            } else {
+                setGeneratedAnnouncement("Error: Could not generate announcement. Please try again.");
+            }
+        } catch (error) {
+            console.error("Error fetching announcement:", error);
+            setGeneratedAnnouncement("An error occurred while contacting the AI service.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card title="Department-wide Announcement" className="lg:col-span-2">
                 <div className="space-y-4">
+                    <div>
+                        <label htmlFor="keywords" className="block mb-2 text-sm font-medium text-gray-700">Announcement Keywords</label>
+                        <div className="flex flex-col sm:flex-row gap-2">
+                            <input 
+                                id="keywords" 
+                                type="text" 
+                                value={announcementKeywords}
+                                onChange={(e) => setAnnouncementKeywords(e.target.value)}
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5" 
+                                placeholder="e.g., meeting tomorrow 3pm agenda placements" 
+                            />
+                            <button onClick={handleGenerateAnnouncement} disabled={isLoading} className="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700 disabled:bg-indigo-400 flex items-center justify-center sm:w-auto flex-shrink-0">
+                                {isLoading ? icons.loader : '✨ Generate with AI'}
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <label htmlFor="message" className="block mb-2 text-sm font-medium text-gray-700">Message</label>
+                        <textarea id="message" rows="6" className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Write your announcement here or generate one with AI..." value={generatedAnnouncement} onChange={(e) => setGeneratedAnnouncement(e.target.value)}></textarea>
+                    </div>
                     <div>
                         <label className="block mb-2 text-sm font-medium text-gray-700">Target Audience</label>
                         <div className="flex items-center space-x-4">
@@ -648,11 +782,7 @@ const CommunicationTools = () => {
                             </div>
                         </div>
                     </div>
-                    <div>
-                        <label htmlFor="message" className="block mb-2 text-sm font-medium text-gray-700">Message</label>
-                        <textarea id="message" rows="4" className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Write your announcement here..."></textarea>
-                    </div>
-                    <button className="w-full bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700">Send Announcement</button>
+                    <button className="w-full bg-green-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-green-700">Send Announcement</button>
                 </div>
             </Card>
 
@@ -714,23 +844,23 @@ const AccessRights = () => {
                 <p className="text-sm text-gray-500 mb-4">Approve marks submissions and attendance corrections from faculty.</p>
                 <ul className="divide-y divide-gray-200">
                     {marksApprovals.map(req => (
-                        <li key={req.id} className="py-4 flex items-center justify-between">
-                            <div>
+                        <li key={req.id} className="py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between">
+                            <div className="mb-2 sm:mb-0">
                                 <p className="text-sm font-medium text-gray-900">{req.subject}</p>
                                 <p className="text-sm text-gray-500">Submitted by: {req.faculty}</p>
                             </div>
-                            <div className="flex items-center space-x-2">
+                            <div className="flex items-center space-x-2 flex-shrink-0">
                                 <TooltipButton tooltip="Approve Submission" className="p-2 bg-green-100 text-green-700 rounded-full hover:bg-green-200">{icons.check}</TooltipButton>
                                 <TooltipButton tooltip="Reject Submission" className="p-2 bg-red-100 text-red-700 rounded-full hover:bg-red-200">{icons.x}</TooltipButton>
                             </div>
                         </li>
                     ))}
-                     <li className="py-4 flex items-center justify-between">
-                        <div>
+                     <li className="py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between">
+                        <div className="mb-2 sm:mb-0">
                             <p className="text-sm font-medium text-gray-900">Attendance Correction for CS101 (20/07/2024)</p>
                             <p className="text-sm text-gray-500">Submitted by: Prof. Alisha Chen</p>
                         </div>
-                        <div className="flex items-center space-x-2">
+                        <div className="flex items-center space-x-2 flex-shrink-0">
                             <TooltipButton tooltip="Approve Correction" className="p-2 bg-green-100 text-green-700 rounded-full hover:bg-green-200">{icons.check}</TooltipButton>
                             <TooltipButton tooltip="Reject Correction" className="p-2 bg-red-100 text-red-700 rounded-full hover:bg-red-200">{icons.x}</TooltipButton>
                         </div>
@@ -752,7 +882,7 @@ const AccessRights = () => {
 // --- MAIN APP COMPONENT --- //
 export default function App() {
     const [activeView, setActiveView] = useState('Dashboard');
-    const [isSidebarOpen, setSidebarOpen] = useState(true);
+    const [isSidebarOpen, setSidebarOpen] = useState(false);
 
     const navItems = [
         { name: 'Dashboard', icon: icons.dashboard, component: <DepartmentControlPanel /> },
@@ -769,31 +899,31 @@ export default function App() {
         return activeItem ? activeItem.component : <DepartmentControlPanel />;
     };
     
+    // Set sidebar state based on screen size
     useEffect(() => {
         const handleResize = () => {
-            if (window.innerWidth < 768) {
-                setSidebarOpen(false);
-            } else {
-                setSidebarOpen(true);
-            }
-        };
+             setSidebarOpen(window.innerWidth >= 768);
+        }
         window.addEventListener('resize', handleResize);
-        handleResize(); // Initial check
+        handleResize();
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
     return (
-        <div className="bg-gray-100 min-h-screen flex">
+        <div className="bg-gray-100 h-screen flex overflow-hidden">
+            {/* Backdrop for mobile sidebar */}
+            {isSidebarOpen && window.innerWidth < 768 && <div className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden" onClick={() => setSidebarOpen(false)}></div>}
+
             {/* Sidebar */}
-            <aside className={`bg-white text-gray-800 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'w-64' : 'w-20'} flex flex-col fixed h-full shadow-lg z-30`}>
-                <div className={`flex items-center justify-center h-20 border-b border-gray-200 ${isSidebarOpen ? 'px-6' : 'px-0'}`}>
-                    {isSidebarOpen ? (
+            <aside className={`bg-white text-gray-800 flex flex-col w-64 h-full shadow-lg z-40 fixed md:relative transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 md:${isSidebarOpen ? 'w-64' : 'w-20'}`}>
+                <div className={`flex items-center h-20 border-b border-gray-200 ${isSidebarOpen ? 'justify-start px-6' : 'justify-center'}`}>
+                     {isSidebarOpen ? (
                         <h1 className="text-2xl font-bold text-indigo-600">HOD Panel</h1>
                     ) : (
                         <div className="text-indigo-600">{icons.dashboard}</div>
                     )}
                 </div>
-                <nav className="flex-1 mt-6">
+                <nav className="flex-1 mt-6 overflow-y-auto">
                     <ul>
                         {navItems.map(item => (
                             <li key={item.name} className="px-4 my-1">
@@ -802,6 +932,9 @@ export default function App() {
                                     onClick={(e) => {
                                         e.preventDefault();
                                         setActiveView(item.name);
+                                        if (window.innerWidth < 768) {
+                                            setSidebarOpen(false);
+                                        }
                                     }}
                                     className={`flex items-center py-3 rounded-lg transition-colors duration-200 ${isSidebarOpen ? 'px-4' : 'justify-center'} ${activeView === item.name ? 'bg-indigo-100 text-indigo-600' : 'text-gray-600 hover:bg-gray-100'}`}
                                 >
@@ -821,23 +954,23 @@ export default function App() {
             </aside>
 
             {/* Main Content */}
-            <div className={`flex-1 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'ml-64' : 'ml-20'}`}>
+            <div className="flex-1 flex flex-col overflow-hidden">
                 {/* Top Navbar */}
-                <header className="bg-white shadow-sm h-20 flex items-center justify-between px-8">
+                <header className="bg-white shadow-sm h-20 flex items-center justify-between px-4 sm:px-6 lg:px-8 flex-shrink-0">
                     <div className="flex items-center">
-                         <button onClick={() => setSidebarOpen(!isSidebarOpen)} className="text-gray-600 mr-6 md:hidden">
+                         <button onClick={() => setSidebarOpen(!isSidebarOpen)} className="text-gray-600 mr-4">
                             {icons.menu}
                         </button>
-                        <h2 className="text-2xl font-bold text-gray-800">{activeView}</h2>
+                        <h2 className="text-xl md:text-2xl font-bold text-gray-800">{activeView}</h2>
                     </div>
-                    <div className="flex items-center space-x-6">
+                    <div className="flex items-center space-x-3 md:space-x-6">
                         <button className="text-gray-500 hover:text-gray-700 relative">
                             {icons.bell}
                             <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">8</span>
                         </button>
                         <div className="flex items-center space-x-3">
                             <img src="https://placehold.co/40x40/6366F1/FFFFFF?text=HOD" alt="HOD Profile" className="w-10 h-10 rounded-full" />
-                            <div>
+                            <div className="hidden sm:block">
                                 <p className="font-semibold text-gray-800">Dr. Alan Grant</p>
                                 <p className="text-sm text-gray-500">HOD, Computer Science</p>
                             </div>
@@ -846,7 +979,7 @@ export default function App() {
                 </header>
 
                 {/* Content Area */}
-                <main className="p-8">
+                <main className="p-4 md:p-8 flex-1 overflow-y-auto">
                     {renderView()}
                 </main>
             </div>
