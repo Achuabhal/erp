@@ -16,6 +16,23 @@ const studentData = {
     }
 };
 
+
+
+const teachers = ["Dr. Evelyn Reed", "Prof. Ben Carter", "Dr. Chloe Green", "Prof. David Shaw"];
+
+const mockChatData = {
+  "Dr. Evelyn Reed": [
+    { from: "student", text: "Hello Ma'am, I had a doubt in today's class.", time: "10:00 AM" },
+    { from: "teacher", text: "Sure, go ahead!", time: "10:10 AM" },
+  ],
+  "Prof. Ben Carter": [],
+};
+
+
+
+
+
+
 const notifications = [
     { id: 1, type: 'assignment', text: 'New assignment posted for CS-301.', time: '2 hours ago' },
     { id: 2, type: 'fee', text: 'Semester fee payment is due next week.', time: '1 day ago' },
@@ -800,6 +817,124 @@ const Reports = () => (
     </Card>
 );
 
+//student and teacher messaging
+
+
+const StudentMessaging = () => {
+  const [selectedTeacher, setSelectedTeacher] = useState(teachers[0]);
+  const [messages, setMessages] = useState(mockChatData[selectedTeacher] || []);
+  const [newMessage, setNewMessage] = useState("");
+
+  useEffect(() => {
+    setMessages(mockChatData[selectedTeacher] || []);
+  }, [selectedTeacher]);
+
+  const sendMessage = () => {
+    if (!newMessage.trim()) return;
+    const msg = { from: "student", text: newMessage, time: new Date().toLocaleTimeString() };
+    const updated = [...messages, msg];
+    setMessages(updated);
+    mockChatData[selectedTeacher] = updated;
+    setNewMessage("");
+  };
+
+  return (
+    <Card>
+      <h2 className="text-xl font-bold mb-4 text-gray-800">Message a Teacher</h2>
+      <div className="mb-4">
+        <select
+          className="p-2 border rounded-md"
+          value={selectedTeacher}
+          onChange={(e) => setSelectedTeacher(e.target.value)}
+        >
+          {teachers.map(t => <option key={t}>{t}</option>)}
+        </select>
+      </div>
+
+      <div className="bg-gray-50 h-60 overflow-y-auto p-4 rounded-lg space-y-2">
+        {messages.map((msg, i) => (
+          <div key={i} className={`flex ${msg.from === 'student' ? 'justify-end' : 'justify-start'}`}>
+            <div className={`p-2 rounded-md text-sm max-w-xs ${msg.from === 'student' ? 'bg-blue-100 text-right' : 'bg-green-100'}`}>
+              <p>{msg.text}</p>
+              <p className="text-xs text-gray-500 mt-1">{msg.time}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="flex mt-4">
+        <input
+          className="flex-grow border p-2 rounded-l-md"
+          value={newMessage}
+          onChange={(e) => setNewMessage(e.target.value)}
+          placeholder="Type a message..."
+        />
+        <button onClick={sendMessage} className="bg-blue-500 text-white px-4 rounded-r-md">
+          <Send size={16} />
+        </button>
+      </div>
+    </Card>
+  );
+};
+
+//od application
+
+
+
+const ODApplication = () => {
+  const [teacher, setTeacher] = useState(teachers[0]);
+  const [reason, setReason] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const [status, setStatus] = useState("Pending");
+
+  const handleSubmit = () => {
+    if (!reason.trim()) return alert("Please provide a reason");
+    setSubmitted(true);
+    // Simulate status update by teacher after 2 seconds
+    setTimeout(() => setStatus("Approved"), 2000);
+  };
+
+  return (
+    <Card>
+      <h2 className="text-xl font-bold mb-4 text-gray-800">OD Application</h2>
+      {!submitted ? (
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium">Select Teacher</label>
+            <select
+              className="w-full border p-2 rounded-md"
+              value={teacher}
+              onChange={(e) => setTeacher(e.target.value)}
+            >
+              {teachers.map(t => <option key={t}>{t}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium">Reason</label>
+            <textarea
+              className="w-full border p-2 rounded-md"
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              rows={4}
+              placeholder="Explain your OD request..."
+            />
+          </div>
+          <button onClick={handleSubmit} className="bg-blue-600 text-white px-4 py-2 rounded-md">
+            Submit OD Request
+          </button>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          <p className="text-sm text-gray-700">Submitted to: <strong>{teacher}</strong></p>
+          <p className="text-sm text-gray-700">Reason: <em>{reason}</em></p>
+          <StatusChip status={status} />
+        </div>
+      )}
+    </Card>
+  );
+};
+
+
 
 // Main App Component
 export default function App() {
@@ -817,6 +952,8 @@ export default function App() {
         { name: 'Calendar & Events', icon: <Calendar size={20} /> },
         { name: 'Communication', icon: <MessageSquare size={20} /> },
         { name: 'Reports', icon: <FileText size={20} /> },
+        { name: 'OD Application', icon: <FileText size={20} /> },
+    { name: 'Message Teacher', icon: <MessageSquare size={20} /> },
     ];
 
     const renderPage = () => {
@@ -830,6 +967,8 @@ export default function App() {
             case 'Calendar & Events': return <CalendarAndEvents />;
             case 'Communication': return <Communication />;
             case 'Reports': return <Reports />;
+            case 'OD Application': return <ODApplication />;
+        case 'Message Teacher': return <StudentMessaging />;
             default: return <DashboardOverview />;
         }
     };
