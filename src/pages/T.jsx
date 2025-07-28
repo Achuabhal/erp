@@ -186,13 +186,13 @@ const Sidebar = ({ activeView, setActiveView, isOpen, setOpen }) => {
                 </nav>
                  <div className={`absolute bottom-0 w-full px-3 mb-4`}>
                      <a
-                        href="#"
-                        className={`flex items-center px-4 py-3 my-1 rounded-lg transition-colors duration-200 text-gray-500 hover:bg-red-50 hover:text-red-600`}
-                    >
-                        <LogOutIcon className="w-5 h-5" />
-                        <span className={`ml-4 whitespace-nowrap transition-opacity ${!isOpen && 'md:opacity-0 md:hidden'}`}>Logout</span>
-                    </a>
-                </div>
+                         href="#"
+                         className={`flex items-center px-4 py-3 my-1 rounded-lg transition-colors duration-200 text-gray-500 hover:bg-red-50 hover:text-red-600`}
+                     >
+                         <LogOutIcon className="w-5 h-5" />
+                         <span className={`ml-4 whitespace-nowrap transition-opacity ${!isOpen && 'md:opacity-0 md:hidden'}`}>Logout</span>
+                     </a>
+                 </div>
             </div>
         </>
     );
@@ -207,12 +207,12 @@ const Header = ({ teacher, setSidebarOpen }) => {
         <header className="sticky top-0 bg-white/80 backdrop-blur-sm z-20 border-b border-gray-200">
             <div className="flex items-center justify-between h-16 px-4 md:px-6">
                  <button onClick={() => setSidebarOpen(true)} className="text-gray-500 md:hidden">
-                    <MenuIcon />
+                     <MenuIcon />
                  </button>
                  <div className="relative hidden md:block">
-                    <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                    <input type="text" placeholder="Search students, subjects..." className="bg-gray-100 rounded-lg pl-10 pr-4 py-2 w-64 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-                </div>
+                     <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                     <input type="text" placeholder="Search students, subjects..." className="bg-gray-100 rounded-lg pl-10 pr-4 py-2 w-64 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                 </div>
                 <div className="flex items-center space-x-4">
                     <button className="relative text-gray-500 hover:text-gray-800">
                         <BellIcon />
@@ -269,18 +269,20 @@ const DashboardOverview = () => {
                 <Card className="lg:col-span-2">
                     <h2 className="font-bold text-lg mb-4">Today's Timetable</h2>
                     <div className="space-y-4">
-                        {mockData.timetable["Monday"].map((item, index) => (
+                        {mockData.timetable["Monday"].length > 0 ? mockData.timetable["Monday"].map((item, index) => (
                              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                                <div>
-                                    <p className="font-semibold">{item.subject}</p>
-                                    <p className="text-sm text-gray-500">{item.time}</p>
-                                </div>
-                                <div className="flex items-center space-x-2">
+                                 <div>
+                                     <p className="font-semibold">{item.subject}</p>
+                                     <p className="text-sm text-gray-500">{item.time}</p>
+                                 </div>
+                                 <div className="flex items-center space-x-2">
                                      <span className="text-xs font-medium bg-blue-100 text-blue-800 px-2 py-1 rounded-full">{item.room}</span>
                                      <span className={`text-xs font-medium px-2 py-1 rounded-full ${item.type === 'Lecture' ? 'bg-green-100 text-green-800' : 'bg-purple-100 text-purple-800'}`}>{item.type}</span>
-                                </div>
-                            </div>
-                        ))}
+                                 </div>
+                             </div>
+                        )) : (
+                            <p className="text-center text-gray-500 py-4">No classes scheduled for today.</p>
+                        )}
                     </div>
                 </Card>
                 <Card>
@@ -303,7 +305,7 @@ const DashboardOverview = () => {
 };
 
 const AcademicManagement = () => {
-    const [activeTab, setActiveTab] = useState('attendance');
+    const [activeTab, setActiveTab] = useState('Attendance');
     const tabs = ['Timetable', 'Attendance', 'Assignments', 'Marks & Exams'];
 
     const renderContent = () => {
@@ -408,20 +410,27 @@ const AttendanceManagement = () => {
             <div className="flex flex-wrap gap-4 justify-between items-center mb-4">
                 <h3 className="font-bold text-lg">Mark Attendance</h3>
                 <div className="flex items-center flex-wrap gap-2">
-                    <input type="date" defaultValue="2024-07-22" className={`${inputFieldClasses} w-auto`}/>
+                    <input type="date" defaultValue="2024-07-29" className={`${inputFieldClasses} w-auto`}/>
                     <select className={`${inputFieldClasses} w-auto`}>
+                        <option>Select Class</option>
+                        <option>CS-A</option>
+                        <option>CS-B</option>
+                        <option>IT-A</option>
+                    </select>
+                    <select className={`${inputFieldClasses} w-auto`}>
+                        <option>Select Subject</option>
                         <option>Data Structures</option>
                         <option>Algorithms</option>
                     </select>
                 </div>
             </div>
              <div className="flex flex-wrap gap-2 justify-between items-center mb-6 border-t pt-4 mt-4">
-                <div className="flex items-center flex-wrap gap-2">
-                    <button className={btnSecondaryClasses}><UploadCloudIcon className="w-4 h-4 mr-2"/> Bulk Upload (CSV)</button>
-                    <button className={btnSecondaryClasses}><EditIcon className="w-4 h-4 mr-2"/> Edit Previous</button>
-                </div>
-                <button className={btnPrimaryClasses}><DownloadIcon className="w-4 h-4 mr-2"/> Export Report</button>
-            </div>
+                 <div className="flex items-center flex-wrap gap-2">
+                     <button className={btnSecondaryClasses}><UploadCloudIcon className="w-4 h-4 mr-2"/> Bulk Upload (CSV)</button>
+                     <button className={btnSecondaryClasses}><EditIcon className="w-4 h-4 mr-2"/> Edit Previous</button>
+                 </div>
+                 <button className={btnPrimaryClasses}><DownloadIcon className="w-4 h-4 mr-2"/> Export Report</button>
+             </div>
             <div className="overflow-x-auto">
                 <table className="w-full text-sm text-left">
                     <thead className="bg-gray-50 text-gray-500 uppercase text-xs">
@@ -595,11 +604,11 @@ const CommunicationTools = () => {
                         </div>
                     </div>
                      <div className="flex items-end gap-2 justify-end">
-                        <div className="bg-indigo-500 text-white p-3 rounded-lg rounded-br-none max-w-md shadow-sm">
-                            <p className="text-sm">Certainly. You need to focus on the REST endpoints, expected request/response formats, and authentication methods. No need for a full sequence diagram.</p>
-                        </div>
-                        <img src={mockData.teacher.avatar} alt={mockData.teacher.name} className="w-8 h-8 rounded-full" />
-                    </div>
+                         <div className="bg-indigo-500 text-white p-3 rounded-lg rounded-br-none max-w-md shadow-sm">
+                             <p className="text-sm">Certainly. You need to focus on the REST endpoints, expected request/response formats, and authentication methods. No need for a full sequence diagram.</p>
+                         </div>
+                         <img src={mockData.teacher.avatar} alt={mockData.teacher.name} className="w-8 h-8 rounded-full" />
+                     </div>
                 </div>
                 <div className="mt-4 flex items-center gap-2">
                     <button className="p-2 text-gray-500 hover:bg-gray-100 rounded-full"><PaperclipIcon className="w-5 h-5"/></button>
@@ -684,30 +693,30 @@ const StudentPerformanceInsights = () => {
                     </div>
                 </div>
                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm text-left">
-                        <thead className="bg-gray-50 text-gray-500 uppercase text-xs">
-                            <tr>
-                                <th className="p-3">Student Name</th>
-                                <th className="p-3">Attendance</th>
-                                <th className="p-3">Avg. Marks</th>
-                                <th className="p-3">Performance Trend</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {filteredStudents().slice(0, 5).map(student => (
-                                <tr key={student.id} className="border-b hover:bg-gray-50">
-                                    <td className="p-3 flex items-center gap-3">
-                                        <img src={student.avatar} alt={student.name} className="w-8 h-8 rounded-full" />
-                                        {student.name}
-                                    </td>
-                                    <td className={`p-3 font-semibold ${student.attendance < 75 ? 'text-red-500' : 'text-green-600'}`}>{student.attendance}%</td>
-                                    <td className={`p-3 font-semibold ${student.marks < 40 ? 'text-red-500' : 'text-gray-800'}`}>{student.marks}/100</td>
-                                    <td className="p-3 text-green-500">▲ Improving</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                     <table className="w-full text-sm text-left">
+                         <thead className="bg-gray-50 text-gray-500 uppercase text-xs">
+                             <tr>
+                                 <th className="p-3">Student Name</th>
+                                 <th className="p-3">Attendance</th>
+                                 <th className="p-3">Avg. Marks</th>
+                                 <th className="p-3">Performance Trend</th>
+                             </tr>
+                         </thead>
+                         <tbody>
+                             {filteredStudents().slice(0, 5).map(student => (
+                                 <tr key={student.id} className="border-b hover:bg-gray-50">
+                                     <td className="p-3 flex items-center gap-3">
+                                         <img src={student.avatar} alt={student.name} className="w-8 h-8 rounded-full" />
+                                         {student.name}
+                                     </td>
+                                     <td className={`p-3 font-semibold ${student.attendance < 75 ? 'text-red-500' : 'text-green-600'}`}>{student.attendance}%</td>
+                                     <td className={`p-3 font-semibold ${student.marks < 40 ? 'text-red-500' : 'text-gray-800'}`}>{student.marks}/100</td>
+                                     <td className="p-3 text-green-500">▲ Improving</td>
+                                 </tr>
+                             ))}
+                         </tbody>
+                     </table>
+                 </div>
             </Card>
         </div>
     );
