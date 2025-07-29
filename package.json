@@ -10,9 +10,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@radix-ui/react-select": "^2.2.5",
     "@tailwindcss/vite": "^4.1.11",
+<<<<<<< HEAD
     "axios": "^1.11.0",
     "bootstrap": "^5.3.7",
+=======
+    "html2canvas": "^1.4.1",
+    "jspdf": "^3.0.1",
+>>>>>>> 2caa5473b76bf2cba8ba88fedb988972757e76f9
     "lucide-react": "^0.525.0",
     "react": "^19.1.0",
     "react-bootstrap": "^2.10.10",
