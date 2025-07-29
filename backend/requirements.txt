@@ -1,0 +1,16 @@
+# Flask & CORS
+flask
+flask-cors
+
+# LangChain + Google Gemini + FAISS
+langchain
+langchain-google-genai
+langchain-community
+google-generativeai
+faiss-cpu
+
+# PDF parsing
+PyPDF2
+
+# Env variable loading
+python-dotenv
