@@ -24,7 +24,7 @@ import {
   FileText,
   ChevronLeft,
   ChevronRight,
-  Bell,
+  Bell,CalendarDays,
   Search,
   Menu,
   X,
@@ -1593,6 +1593,105 @@ const ODApplication = () => {
   );
 };
 
+
+
+
+
+
+
+
+
+
+
+const studentTimetable = {
+  studentName: "Aman Kumar",
+  class: "10",
+  section: "A",
+  timetable: {
+    Monday: [
+      { time: "9:00 - 10:00", subject: "Mathematics", teacher: "Mrs. Sharma" },
+      { time: "10:00 - 11:00", subject: "Science", teacher: "Mr. Rao" },
+    ],
+    Tuesday: [
+      { time: "9:00 - 10:00", subject: "English", teacher: "Mrs. Das" },
+      { time: "10:00 - 11:00", subject: "Mathematics", teacher: "Mrs. Sharma" },
+    ],
+    Wednesday: [
+      { time: "9:00 - 10:00", subject: "Science", teacher: "Mr. Rao" },
+      { time: "10:00 - 11:00", subject: "Computer", teacher: "Mr. Iyer" },
+    ],
+    Thursday: [
+      { time: "9:00 - 10:00", subject: "English", teacher: "Mrs. Das" },
+      { time: "10:00 - 11:00", subject: "Mathematics", teacher: "Mrs. Sharma" },
+    ],
+    Friday: [
+      { time: "9:00 - 10:00", subject: "Science", teacher: "Mr. Rao" },
+      { time: "10:00 - 11:00", subject: "Computer", teacher: "Mr. Iyer" },
+    ],
+  },
+};
+
+const StudentTimetable = () => {
+  const days = Object.keys(studentTimetable.timetable);
+  const today = new Date().toLocaleDateString("en-IN", { weekday: "long" });
+
+  return (
+    <div className="p-6">
+      <div className="flex items-center gap-3 mb-6">
+        <CalendarDays className="text-blue-600" />
+        <div>
+          <h2 className="text-2xl font-bold">Current Semester Timetable</h2>
+          <p className="text-sm text-gray-500">
+            Timetable for {studentTimetable.studentName} (Class {studentTimetable.class}-{studentTimetable.section})
+          </p>
+        </div>
+      </div>
+
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-white border rounded shadow text-sm">
+          <thead className="bg-gray-100">
+            <tr>
+              <th className="px-4 py-2 text-left">Day</th>
+              <th className="px-4 py-2 text-left">Time</th>
+              <th className="px-4 py-2 text-left">Subject</th>
+              <th className="px-4 py-2 text-left">Teacher</th>
+            </tr>
+          </thead>
+          <tbody>
+            {days.map((day) =>
+              studentTimetable.timetable[day].map((slot, index) => (
+                <tr
+                  key={`${day}-${index}`}
+                  className={
+                    day === today ? "bg-blue-50 border-t" : "border-t"
+                  }
+                >
+                  {index === 0 && (
+                    <td
+                      rowSpan={studentTimetable.timetable[day].length}
+                      className="px-4 py-2 font-semibold text-gray-700"
+                    >
+                      {day}
+                    </td>
+                  )}
+                  <td className="px-4 py-2">{slot.time}</td>
+                  <td className="px-4 py-2">{slot.subject}</td>
+                  <td className="px-4 py-2">{slot.teacher}</td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+
+
+
+
+
 // Main App Component
 export default function App() {
   const [activePage, setActivePage] = useState("Dashboard");
@@ -1605,6 +1704,7 @@ export default function App() {
     { name: "Finance & Fees", icon: <DollarSign size={20} /> },
     { name: "Profile & Docs", icon: <User size={20} /> },
     { name: "AI Tools", icon: <Bot size={20} /> },
+{ name: "Time Table", icon: <CalendarDays size={20} /> },
     { name: "Placement Portal", icon: <Briefcase size={20} /> },
     { name: "Calendar & Events", icon: <Calendar size={20} /> },
     { name: "Communication", icon: <MessageSquare size={20} /> },
@@ -1625,6 +1725,8 @@ export default function App() {
         return <Profile />;
       case "AI Tools":
         return <AITools />;
+         case "Time Table":
+        return <StudentTimetable/>;
       case "Placement Portal":
         return <PlacementPortal />;
       case "Calendar & Events":

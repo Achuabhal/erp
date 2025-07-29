@@ -4,7 +4,7 @@ import HomePage from "./pages/S";
 import AboutPage from "./pages/H";
 import ContactPage from "./pages/T";
 import FeeManagementDashboard from "./pages/F";
-
+import Admin from "./pages/Admin";
 // Import your pages
 
 function App() {
@@ -15,6 +15,7 @@ function App() {
         <Route path="/h" element={<AboutPage />} />
         <Route path="/t" element={<ContactPage />} />
                 <Route path="/f" element={<FeeManagementDashboard/>} />
+                <Route path="/admin" element={<Admin/>} />
 
       </Routes>
     </Router>
