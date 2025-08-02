@@ -791,6 +791,7 @@ const SecurityAndAccess = () => (
                         <span className="font-mono text-xs bg-green-100 text-green-800 p-1 rounded">SUBMIT</span> Attendance for <strong>Data Structures</strong> marked. <span className="text-gray-400 float-right">4h ago</span>
                     </li>
                 </ul>
+                
             </div>
         </div>
     </Card>
