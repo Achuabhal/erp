@@ -1,643 +1,686 @@
 import React, { useState, useMemo } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { FileDown, CheckCircle, XCircle, AlertTriangle, Mail, Filter, Search, ChevronDown, ChevronUp, User, Bell } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { FileText, UserPlus, Search, Bell, ChevronDown, MoreVertical, Upload, CheckCircle, XCircle, Clock, DollarSign, List, BarChart2, Settings, LogOut, Users, Home } from 'lucide-react';
 
-// --- MOCK DATA --- //
+// --- DUMMY DATA --- //
+const initialEnquiries = [
+  { id: 1, name: 'Rohan Sharma', contact: '9876543210', course: 'Computer Science', source: 'Website', status: 'New', followUp: '2025-08-10' },
+  { id: 2, name: 'Priya Patel', contact: '8765432109', course: 'Business Administration', source: 'Referral', status: 'Contacted', followUp: '2025-08-12' },
+  { id: 3, name: 'Amit Singh', contact: '7654321098', course: 'Mechanical Engineering', source: 'Seminar', status: 'Converted', followUp: '2025-08-11' },
+  { id: 4, name: 'Sneha Reddy', contact: '6543210987', course: 'Biotechnology', source: 'Website', status: 'Lost', followUp: '2025-08-09' },
+];
+
 const initialApplications = [
   {
-    id: 'APP-001',
-    name: 'Aarav Sharma',
-    course: 'Computer Science',
-    stream: 'Engineering',
-    submissionDate: '2025-07-15',
-    status: 'Pending', // Pending, Verified, Approved, Rejected
-    eligibility: {
-      required: '12th Grade % >= 75',
-      actual: '88%',
-      met: true,
-      override: false,
-      remarks: ''
-    },
+    id: 'APP2025001', name: 'Amit Singh', course: 'Mechanical Engineering', status: 'Admitted',
     documents: [
-      { id: 1, name: '10th Marksheet.pdf', url: '#', status: 'Pending' },
-      { id: 2, name: '12th Marksheet.pdf', url: '#', status: 'Pending' },
-      { id: 3, name: 'ID Proof (Aadhaar).pdf', url: '#', status: 'Pending' },
-      { id: 4, name: 'Photo.jpg', url: '#', status: 'Pending' },
+      { name: 'Photo', status: 'Verified', url: '#' },
+      { name: 'ID Proof', status: 'Verified', url: '#' },
+      { name: 'Marksheets', status: 'Verified', url: '#' },
     ],
-    rejectionReason: '',
+    eligibility: { checked: true, result: 'Eligible', score: 88 },
+    fee: { total: 150000, paid: 150000, status: 'Paid', receipt: 'RCPT001' },
+    rollNo: 'MECH-001', studentId: 'STU-MECH-001', admissionLetter: '#'
   },
   {
-    id: 'APP-002',
-    name: 'Priya Patel',
-    course: 'Mechanical Engineering',
-    stream: 'Engineering',
-    submissionDate: '2025-07-16',
-    status: 'Verified',
-    eligibility: {
-      required: '12th Grade % >= 70',
-      actual: '92%',
-      met: true,
-      override: false,
-      remarks: ''
-    },
+    id: 'APP2025002', name: 'Sunita Williams', contact: '9123456780', course: 'Computer Science', status: 'Pending Verification',
     documents: [
-      { id: 1, name: '10th Marksheet.pdf', url: '#', status: 'Verified' },
-      { id: 2, name: '12th Marksheet.pdf', url: '#', status: 'Verified' },
-      { id: 3, name: 'ID Proof (Passport).pdf', url: '#', status: 'Verified' },
+      { name: 'Photo', status: 'Pending', url: '#' },
+      { name: 'ID Proof', status: 'Pending', url: '#' },
+      { name: 'Marksheets', status: 'Rejected', comment: 'Please upload consolidated marksheet.', url: '#' },
     ],
-    rejectionReason: '',
+    eligibility: { checked: false, result: 'Pending', score: null },
+    fee: { total: 120000, paid: 0, status: 'Unpaid' },
   },
   {
-    id: 'APP-003',
-    name: 'Rohan Singh',
-    course: 'Business Administration',
-    stream: 'Commerce',
-    submissionDate: '2025-07-18',
-    status: 'Approved',
-    eligibility: {
-      required: '12th Grade % >= 65',
-      actual: '78%',
-      met: true,
-      override: false,
-      remarks: ''
-    },
+    id: 'APP2025003', name: 'Karan Malhotra', contact: '9234567891', course: 'Business Administration', status: 'Approved',
     documents: [
-      { id: 1, name: '12th Marksheet.pdf', url: '#', status: 'Verified' },
-      { id: 2, name: 'ID Proof.pdf', url: '#', status: 'Verified' },
+      { name: 'Photo', status: 'Verified', url: '#' },
+      { name: 'ID Proof', status: 'Verified', url: '#' },
+      { name: 'Marksheets', status: 'Verified', url: '#' },
     ],
-    rejectionReason: '',
+    eligibility: { checked: true, result: 'Eligible', score: 92 },
+    fee: { total: 180000, paid: 0, status: 'Pending Payment' },
   },
   {
-    id: 'APP-004',
-    name: 'Sneha Gupta',
-    course: 'Computer Science',
-    stream: 'Engineering',
-    submissionDate: '2025-07-20',
-    status: 'Rejected',
-    eligibility: {
-      required: '12th Grade % >= 75',
-      actual: '71%',
-      met: false,
-      override: false,
-      remarks: ''
-    },
+    id: 'APP2025004', name: 'Anjali Verma', contact: '9345678902', course: 'Biotechnology', status: 'Waitlisted',
     documents: [
-      { id: 1, name: '12th Marksheet.pdf', url: '#', status: 'Verified' },
-      { id: 2, name: 'ID Proof.pdf', url: '#', status: 'Rejected', remarks: 'ID proof is not clear.' },
+      { name: 'Photo', status: 'Verified', url: '#' },
+      { name: 'ID Proof', status: 'Verified', url: '#' },
+      { name: 'Marksheets', status: 'Verified', url: '#' },
     ],
-    rejectionReason: 'Incomplete document verification.',
+    eligibility: { checked: true, result: 'Eligible', score: 85 },
+    fee: { total: 130000, paid: 0, status: 'Unpaid' },
   },
-   {
-    id: 'APP-005',
-    name: 'Vikram Reddy',
-    course: 'Civil Engineering',
-    stream: 'Engineering',
-    submissionDate: '2025-07-21',
-    status: 'Pending',
-    eligibility: {
-      required: '12th Grade % >= 70',
-      actual: '68%',
-      met: false,
-      override: true,
-      remarks: 'Exceptional performance in state-level sports quota.'
-    },
+  {
+    id: 'APP2025005', name: 'Vikram Rathore', contact: '9456789013', course: 'Computer Science', status: 'Rejected',
     documents: [
-      { id: 1, name: '12th Marksheet.pdf', url: '#', status: 'Verified' },
-      { id: 2, name: 'Sports Certificate.pdf', url: '#', status: 'Verified' },
-      { id: 3, name: 'ID Proof.pdf', url: '#', status: 'Pending' },
+      { name: 'Photo', status: 'Verified', url: '#' },
+      { name: 'ID Proof', status: 'Verified', url: '#' },
+      { name: 'Marksheets', status: 'Verified', url: '#' },
     ],
-    rejectionReason: '',
+    eligibility: { checked: true, result: 'Not Eligible', reason: 'Minimum qualification percentage not met.', score: 55 },
+    fee: { total: 120000, paid: 0, status: 'Unpaid' },
   },
 ];
 
-const courseSeats = {
-  'Computer Science': { total: 120, filled: 35 },
-  'Mechanical Engineering': { total: 100, filled: 22 },
-  'Business Administration': { total: 80, filled: 45 },
-  'Civil Engineering': { total: 100, filled: 15 },
-};
+const feeStructures = [
+    { course: 'Computer Science', admissionFee: 120000, tuitionFee: 100000, other: 20000 },
+    { course: 'Business Administration', admissionFee: 180000, tuitionFee: 150000, other: 30000 },
+    { course: 'Mechanical Engineering', admissionFee: 150000, tuitionFee: 125000, other: 25000 },
+    { course: 'Biotechnology', admissionFee: 130000, tuitionFee: 110000, other: 20000 },
+];
+
+const seatData = [
+    { course: 'Computer Science', total: 120, category: 'General' },
+    { course: 'Business Administration', total: 60, category: 'General' },
+    { course: 'Mechanical Engineering', total: 120, category: 'General' },
+    { course: 'Biotechnology', total: 50, category: 'General' },
+];
 
 // --- HELPER COMPONENTS --- //
 
 const StatusBadge = ({ status }) => {
   const baseClasses = "px-3 py-1 text-xs font-medium rounded-full inline-block";
-  const statusClasses = {
-    Pending: "bg-yellow-100 text-yellow-800",
-    Verified: "bg-blue-100 text-blue-800",
-    Approved: "bg-green-100 text-green-800",
-    Rejected: "bg-red-100 text-red-800",
+  const statusConfig = {
+    'New': 'bg-blue-100 text-blue-800',
+    'Contacted': 'bg-yellow-100 text-yellow-800',
+    'Converted': 'bg-green-100 text-green-800',
+    'Lost': 'bg-red-100 text-red-800',
+    'Pending Verification': 'bg-yellow-100 text-yellow-800',
+    'Verified': 'bg-green-100 text-green-800',
+    'Rejected': 'bg-red-100 text-red-800',
+    'Pending': 'bg-gray-100 text-gray-800',
+    'Approved': 'bg-teal-100 text-teal-800',
+    'Admitted': 'bg-purple-100 text-purple-800',
+    'Waitlisted': 'bg-indigo-100 text-indigo-800',
+    'Eligible': 'bg-green-100 text-green-800',
+    'Not Eligible': 'bg-red-100 text-red-800',
+    'Paid': 'bg-green-100 text-green-800',
+    'Unpaid': 'bg-red-100 text-red-800',
+    'Pending Payment': 'bg-yellow-100 text-yellow-800',
   };
-  return <span className={`${baseClasses} ${statusClasses[status]}`}>{status}</span>;
+  return <span className={`${baseClasses} ${statusConfig[status] || 'bg-gray-100 text-gray-800'}`}>{status}</span>;
 };
 
-const SeatProgressBar = ({ course, seats }) => {
-  const percentage = Math.round((seats.filled / seats.total) * 100);
+const Card = ({ title, value, icon, color }) => (
+  <div className="bg-white p-6 rounded-lg shadow-md flex items-center">
+    <div className={`p-3 rounded-full mr-4 ${color}`}>
+      {icon}
+    </div>
+    <div>
+      <p className="text-sm text-gray-500">{title}</p>
+      <p className="text-2xl font-bold text-gray-800">{value}</p>
+    </div>
+  </div>
+);
+
+const Modal = ({ children, isOpen, onClose }) => {
+  if (!isOpen) return null;
   return (
-    <div className="mb-4">
-      <div className="flex justify-between items-center mb-1 text-sm">
-        <span className="font-medium text-gray-700">{course}</span>
-        <span className="text-gray-500">{seats.filled} / {seats.total} Seats</span>
-      </div>
-      <div className="w-full bg-gray-200 rounded-full h-2.5">
-        <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: `${percentage}%` }}></div>
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
+      <div className="bg-white rounded-lg shadow-xl p-8 w-full max-w-lg relative">
+        <button onClick={onClose} className="absolute top-4 right-4 text-gray-500 hover:text-gray-800">
+          <XCircle size={24} />
+        </button>
+        {children}
       </div>
     </div>
   );
 };
 
-const NotificationPopup = ({ message, type, onDismiss }) => {
+const Notification = ({ message, type, onDismiss }) => {
     if (!message) return null;
-
-    const icons = {
-        success: <CheckCircle className="h-5 w-5 text-green-500" />,
-        error: <XCircle className="h-5 w-5 text-red-500" />,
-        info: <AlertTriangle className="h-5 w-5 text-blue-500" />,
-    };
-
     const colors = {
-        success: "bg-green-100 border-green-400 text-green-700",
-        error: "bg-red-100 border-red-400 text-red-700",
-        info: "bg-blue-100 border-blue-400 text-blue-700",
-    }
+        success: 'bg-green-500',
+        error: 'bg-red-500',
+        info: 'bg-blue-500',
+    };
+    return (
+        <div className={`fixed top-5 right-5 text-white px-6 py-3 rounded-lg shadow-lg z-50 ${colors[type]}`}>
+            {message}
+            <button onClick={onDismiss} className="ml-4 font-bold">X</button>
+        </div>
+    );
+};
+
+
+// --- PAGE COMPONENTS --- //
+
+const Dashboard = ({ applications, enquiries }) => {
+    const applicationStatusData = useMemo(() => {
+        const counts = applications.reduce((acc, app) => {
+            acc[app.status] = (acc[app.status] || 0) + 1;
+            return acc;
+        }, {});
+        return Object.entries(counts).map(([name, value]) => ({ name, value }));
+    }, [applications]);
+
+    const courseWiseData = useMemo(() => {
+        const counts = applications.reduce((acc, app) => {
+            acc[app.course] = (acc[app.course] || 0) + 1;
+            return acc;
+        }, {});
+        return Object.entries(counts).map(([name, applications]) => ({ name, applications }));
+    }, [applications]);
+
+    const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF', '#FF4560'];
 
     return (
-        <div className={`fixed top-5 right-5 z-50 p-4 rounded-md border ${colors[type]} shadow-lg flex items-center space-x-3 animate-fade-in-down`}>
-            {icons[type]}
-            <span>{message}</span>
-            <button onClick={onDismiss} className="text-xl font-bold">&times;</button>
+        <div>
+            <h1 className="text-3xl font-bold text-gray-800 mb-6">Dashboard</h1>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <Card title="Total Applications" value={applications.length} icon={<FileText className="text-blue-500" />} color="bg-blue-100" />
+                <Card title="New Enquiries" value={enquiries.filter(e => e.status === 'New').length} icon={<UserPlus className="text-green-500" />} color="bg-green-100" />
+                <Card title="Admissions Finalized" value={applications.filter(a => a.status === 'Admitted').length} icon={<CheckCircle className="text-purple-500" />} color="bg-purple-100" />
+                <Card title="Pending Verifications" value={applications.filter(a => a.status === 'Pending Verification').length} icon={<Clock className="text-yellow-500" />} color="bg-yellow-100" />
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div className="bg-white p-6 rounded-lg shadow-md">
+                    <h3 className="text-lg font-semibold text-gray-700 mb-4">Course-wise Applications</h3>
+                    <ResponsiveContainer width="100%" height={300}>
+                        <BarChart data={courseWiseData}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="name" angle={-15} textAnchor="end" height={50} tick={{ fontSize: 12 }} />
+                            <YAxis />
+                            <Tooltip />
+                            <Legend />
+                            <Bar dataKey="applications" fill="#8884d8" />
+                        </BarChart>
+                    </ResponsiveContainer>
+                </div>
+                <div className="bg-white p-6 rounded-lg shadow-md">
+                    <h3 className="text-lg font-semibold text-gray-700 mb-4">Application Status Distribution</h3>
+                    <ResponsiveContainer width="100%" height={300}>
+                        <PieChart>
+                            <Pie
+                                data={applicationStatusData}
+                                cx="50%"
+                                cy="50%"
+                                labelLine={false}
+                                outerRadius={110}
+                                fill="#8884d8"
+                                dataKey="value"
+                                nameKey="name"
+                                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                            >
+                                {applicationStatusData.map((entry, index) => (
+                                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                ))}
+                            </Pie>
+                            <Tooltip />
+                        </PieChart>
+                    </ResponsiveContainer>
+                </div>
+            </div>
         </div>
     );
 };
 
+const EnquiryManagement = ({ enquiries, setEnquiries }) => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [newEnquiry, setNewEnquiry] = useState({ name: '', contact: '', course: '', source: 'Website' });
 
-// --- MAIN COMPONENTS --- //
+    const handleAddEnquiry = () => {
+        if (!newEnquiry.name || !newEnquiry.contact || !newEnquiry.course) {
+            alert("Please fill all fields.");
+            return;
+        }
+        const newEntry = {
+            id: enquiries.length + 1,
+            ...newEnquiry,
+            status: 'New',
+            followUp: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] // 5 days from now
+        };
+        setEnquiries([newEntry, ...enquiries]);
+        setIsModalOpen(false);
+        setNewEnquiry({ name: '', contact: '', course: '', source: 'Website' });
+    };
 
-const Dashboard = ({ applications, seats }) => {
-  const stats = useMemo(() => {
-    return applications.reduce((acc, app) => {
-      acc[app.status.toLowerCase()] = (acc[app.status.toLowerCase()] || 0) + 1;
-      return acc;
-    }, { total: applications.length, approved: 0, rejected: 0, pending: 0, verified: 0 });
-  }, [applications]);
+    const handleStatusChange = (id, newStatus) => {
+        setEnquiries(enquiries.map(e => e.id === id ? { ...e, status: newStatus } : e));
+    };
 
-  const chartData = Object.entries(seats).map(([course, data]) => ({
-    name: course,
-    Approved: applications.filter(a => a.course === course && a.status === 'Approved').length,
-    Pending: applications.filter(a => a.course === course && a.status !== 'Approved' && a.status !== 'Rejected').length,
-  }));
+    return (
+        <div>
+            <div className="flex justify-between items-center mb-6">
+                <h1 className="text-3xl font-bold text-gray-800">Enquiry Management</h1>
+                <button onClick={() => setIsModalOpen(true)} className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600 flex items-center">
+                    <UserPlus size={18} className="mr-2" /> Add Enquiry
+                </button>
+            </div>
 
-  return (
+            <div className="bg-white rounded-lg shadow-md overflow-x-auto">
+                <table className="w-full text-sm text-left text-gray-500">
+                    <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+                        <tr>
+                            <th scope="col" className="px-6 py-3">Name</th>
+                            <th scope="col" className="px-6 py-3">Contact</th>
+                            <th scope="col" className="px-6 py-3">Course of Interest</th>
+                            <th scope="col" className="px-6 py-3">Lead Source</th>
+                            <th scope="col" className="px-6 py-3">Follow-up Date</th>
+                            <th scope="col" className="px-6 py-3">Status</th>
+                            <th scope="col" className="px-6 py-3">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {enquiries.map(enquiry => (
+                            <tr key={enquiry.id} className="bg-white border-b hover:bg-gray-50">
+                                <td className="px-6 py-4 font-medium text-gray-900">{enquiry.name}</td>
+                                <td className="px-6 py-4">{enquiry.contact}</td>
+                                <td className="px-6 py-4">{enquiry.course}</td>
+                                <td className="px-6 py-4">{enquiry.source}</td>
+                                <td className="px-6 py-4">{enquiry.followUp}</td>
+                                <td className="px-6 py-4"><StatusBadge status={enquiry.status} /></td>
+                                <td className="px-6 py-4">
+                                    <select 
+                                        value={enquiry.status} 
+                                        onChange={(e) => handleStatusChange(enquiry.id, e.target.value)}
+                                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2"
+                                    >
+                                        <option>New</option>
+                                        <option>Contacted</option>
+                                        <option>Converted</option>
+                                        <option>Lost</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+
+            <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+                <h2 className="text-2xl font-bold mb-4">Add New Enquiry</h2>
+                <div className="space-y-4">
+                    <input type="text" placeholder="Full Name" value={newEnquiry.name} onChange={e => setNewEnquiry({...newEnquiry, name: e.target.value})} className="w-full p-2 border rounded-lg" />
+                    <input type="text" placeholder="Contact Number" value={newEnquiry.contact} onChange={e => setNewEnquiry({...newEnquiry, contact: e.target.value})} className="w-full p-2 border rounded-lg" />
+                    <select value={newEnquiry.course} onChange={e => setNewEnquiry({...newEnquiry, course: e.target.value})} className="w-full p-2 border rounded-lg bg-white">
+                        <option value="">Select Course</option>
+                        {feeStructures.map(f => <option key={f.course} value={f.course}>{f.course}</option>)}
+                    </select>
+                    <select value={newEnquiry.source} onChange={e => setNewEnquiry({...newEnquiry, source: e.target.value})} className="w-full p-2 border rounded-lg bg-white">
+                        <option>Website</option>
+                        <option>Seminar</option>
+                        <option>Referral</option>
+                        <option>Walk-in</option>
+                    </select>
+                    <button onClick={handleAddEnquiry} className="w-full bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600">Submit Enquiry</button>
+                </div>
+            </Modal>
+        </div>
+    );
+};
+
+const ApplicationList = ({ applications, onSelectApplication }) => (
     <div>
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">Analytics Dashboard</h1>
-      
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h3 className="text-gray-500 text-sm font-medium">Total Applications</h3>
-          <p className="text-3xl font-bold text-gray-800">{stats.total}</p>
+        <h1 className="text-3xl font-bold text-gray-800 mb-6">Applications</h1>
+        <div className="bg-white rounded-lg shadow-md overflow-x-auto">
+            <table className="w-full text-sm text-left text-gray-500">
+                <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+                    <tr>
+                        <th scope="col" className="px-6 py-3">Application ID</th>
+                        <th scope="col" className="px-6 py-3">Applicant Name</th>
+                        <th scope="col" className="px-6 py-3">Course</th>
+                        <th scope="col" className="px-6 py-3">Status</th>
+                        <th scope="col" className="px-6 py-3">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {applications.map(app => (
+                        <tr key={app.id} className="bg-white border-b hover:bg-gray-50">
+                            <td className="px-6 py-4 font-mono text-gray-700">{app.id}</td>
+                            <td className="px-6 py-4 font-medium text-gray-900">{app.name}</td>
+                            <td className="px-6 py-4">{app.course}</td>
+                            <td className="px-6 py-4"><StatusBadge status={app.status} /></td>
+                            <td className="px-6 py-4">
+                                <button onClick={() => onSelectApplication(app.id)} className="text-blue-600 hover:underline">View Details</button>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h3 className="text-gray-500 text-sm font-medium">Approved</h3>
-          <p className="text-3xl font-bold text-green-600">{stats.approved}</p>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h3 className="text-gray-500 text-sm font-medium">Rejected</h3>
-          <p className="text-3xl font-bold text-red-600">{stats.rejected}</p>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h3 className="text-gray-500 text-sm font-medium">Pending/Verified</h3>
-          <p className="text-3xl font-bold text-yellow-600">{stats.pending + stats.verified}</p>
-        </div>
-      </div>
-
-      {/* Charts and Progress */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 bg-white p-6 rounded-lg shadow-md">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Applications by Course</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" fontSize={12} />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="Approved" fill="#22c55e" />
-              <Bar dataKey="Pending" fill="#f59e0b" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Seats Filled</h3>
-          {Object.entries(seats).map(([course, data]) => (
-            <SeatProgressBar key={course} course={course} seats={data} />
-          ))}
-        </div>
-      </div>
     </div>
-  );
-};
+);
 
-const ApplicationDetailsModal = ({ application, onClose, onUpdate, onNotify, onSeatUpdate }) => {
-  if (!application) return null;
+const ApplicationDetails = ({ app, setApplications, onBack, showNotification }) => {
+    const [score, setScore] = useState(app.eligibility.score || '');
 
-  const [currentApp, setCurrentApp] = useState(JSON.parse(JSON.stringify(application)));
-  const [rejectionReason, setRejectionReason] = useState('');
-  const [showRejectionPrompt, setShowRejectionPrompt] = useState(false);
+    const handleDocStatusChange = (docName, status, comment = "") => {
+        const updatedApp = {
+            ...app,
+            documents: app.documents.map(doc => doc.name === docName ? { ...doc, status, comment } : doc)
+        };
+        setApplications(prev => prev.map(a => a.id === app.id ? updatedApp : a));
+    };
 
-  const handleDocStatusChange = (docId, newStatus, remarks = '') => {
-    const updatedDocs = currentApp.documents.map(doc =>
-      doc.id === docId ? { ...doc, status: newStatus, remarks } : doc
-    );
-    setCurrentApp({ ...currentApp, documents: updatedDocs });
-  };
-  
-  const handleEligibilityOverride = (e) => {
-      const { checked } = e.target;
-      setCurrentApp({
-          ...currentApp,
-          eligibility: { ...currentApp.eligibility, override: checked }
-      });
-  };
+    const handleEligibilityCheck = () => {
+        const isEligible = parseInt(score) >= 60;
+        const updatedApp = {
+            ...app,
+            eligibility: {
+                checked: true,
+                result: isEligible ? 'Eligible' : 'Not Eligible',
+                reason: isEligible ? '' : 'Minimum qualification percentage not met.',
+                score: parseInt(score)
+            }
+        };
+        setApplications(prev => prev.map(a => a.id === app.id ? updatedApp : a));
+        showNotification(`Eligibility Check Complete: ${isEligible ? 'Eligible' : 'Not Eligible'}`, 'info');
+    };
 
-  const handleApprove = () => {
-      const updatedApp = { ...currentApp, status: 'Approved' };
-      onUpdate(updatedApp);
-      onNotify(`Application ${currentApp.id} approved. Admission letter sent.`, 'success');
-      if (application.status !== 'Approved') {
-        onSeatUpdate(currentApp.course, 1);
-      }
-      onClose();
-  };
-
-  const handleReject = () => {
-      if (!rejectionReason.trim()) {
-          onNotify('Please provide a reason for rejection.', 'error');
-          return;
-      }
-      const updatedApp = { ...currentApp, status: 'Rejected', rejectionReason };
-      onUpdate(updatedApp);
-      onNotify(`Application ${currentApp.id} has been rejected.`, 'info');
-      if (application.status === 'Approved') {
-        onSeatUpdate(currentApp.course, -1);
-      }
-      onClose();
-  };
-  
-  const handleVerifyAllDocs = () => {
-    const allDocsVerified = currentApp.documents.every(d => d.status === 'Verified');
-    if(allDocsVerified) {
-        const updatedApp = { ...currentApp, status: 'Verified' };
-        onUpdate(updatedApp);
-        onNotify(`Application ${currentApp.id} documents verified.`, 'info');
-    } else {
-        onNotify('Not all documents are marked as "Verified".', 'error');
-    }
-  }
-
-  const isEligible = currentApp.eligibility.met || currentApp.eligibility.override;
-  const allDocsVerified = currentApp.documents.every(d => d.status === 'Verified');
-
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-40 flex justify-center items-center p-4" onClick={onClose}>
-      <div className="bg-white rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
-        <div className="p-6 border-b sticky top-0 bg-white z-10">
-          <div className="flex justify-between items-center">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-800">{currentApp.name}</h2>
-              <p className="text-sm text-gray-500">Application ID: {currentApp.id} | Course: {currentApp.course}</p>
-            </div>
-            <button onClick={onClose} className="text-gray-400 hover:text-gray-600">&times;</button>
-          </div>
-        </div>
-        <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Left Column: Verification & Eligibility */}
-          <div className="md:col-span-2 space-y-6">
-            {/* Document Verification */}
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <h3 className="font-semibold text-lg mb-4 text-gray-700">Document Verification</h3>
-              <div className="space-y-3">
-                {currentApp.documents.map(doc => (
-                  <div key={doc.id} className="p-3 bg-white rounded-md border flex flex-col sm:flex-row sm:items-center justify-between">
-                    <div>
-                      <p className="font-medium text-gray-800">{doc.name}</p>
-                      <span className={`text-xs font-semibold ${doc.status === 'Verified' ? 'text-green-600' : doc.status === 'Rejected' ? 'text-red-600' : 'text-yellow-600'}`}>{doc.status}</span>
-                      {doc.status === 'Rejected' && doc.remarks && <p className="text-xs text-red-500 mt-1">Remark: {doc.remarks}</p>}
-                    </div>
-                    <div className="flex items-center space-x-2 mt-2 sm:mt-0">
-                      <a href={doc.url} download className="p-2 text-gray-500 hover:bg-gray-100 rounded-full"><FileDown size={18} /></a>
-                      <button onClick={() => handleDocStatusChange(doc.id, 'Verified')} className="p-2 text-green-500 hover:bg-green-50 rounded-full"><CheckCircle size={18} /></button>
-                      <button onClick={() => handleDocStatusChange(doc.id, 'Rejected', prompt('Enter rejection remark (optional):'))} className="p-2 text-red-500 hover:bg-red-50 rounded-full"><XCircle size={18} /></button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <button onClick={handleVerifyAllDocs} className="mt-4 w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition-colors disabled:bg-gray-300" disabled={!currentApp.documents.every(d => d.status === 'Verified') || currentApp.status !== 'Pending'}>
-                Mark Application as Verified
-              </button>
-            </div>
-
-            {/* Eligibility Check */}
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <h3 className="font-semibold text-lg mb-4 text-gray-700">Eligibility Check</h3>
-              <div className={`p-3 rounded-md border-l-4 ${isEligible ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50'}`}>
-                <div className="flex justify-between items-center">
-                  <p className="font-medium">Minimum Eligibility</p>
-                  {isEligible ? <CheckCircle className="text-green-500" /> : <AlertTriangle className="text-red-500" />}
-                </div>
-                <p className="text-sm text-gray-600">Required: {currentApp.eligibility.required}</p>
-                <p className="text-sm text-gray-600">Actual: {currentApp.eligibility.actual}</p>
-              </div>
-              {!currentApp.eligibility.met && (
-                <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
-                   <label className="flex items-center space-x-2">
-                     <input type="checkbox" checked={currentApp.eligibility.override} onChange={handleEligibilityOverride} className="form-checkbox h-5 w-5 text-yellow-600 rounded" />
-                     <span className="text-sm font-medium text-yellow-800">Manually Override Eligibility</span>
-                   </label>
-                   {currentApp.eligibility.override && (
-                     <textarea 
-                        value={currentApp.eligibility.remarks}
-                        onChange={(e) => setCurrentApp({...currentApp, eligibility: {...currentApp.eligibility, remarks: e.target.value}})}
-                        placeholder="Admin remarks for override (e.g., special quota)"
-                        className="mt-2 w-full p-2 text-sm border rounded-md"
-                     />
-                   )}
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Right Column: Actions */}
-          <div className="bg-gray-50 p-4 rounded-lg flex flex-col justify-between">
-            <div>
-              <h3 className="font-semibold text-lg mb-4 text-gray-700">Application Status</h3>
-              <div className="text-center">
-                <StatusBadge status={currentApp.status} />
-              </div>
-              {currentApp.status === 'Rejected' && (
-                <div className="mt-4 p-3 bg-red-50 text-red-700 text-sm rounded-md">
-                  <strong>Rejection Reason:</strong> {currentApp.rejectionReason}
-                </div>
-              )}
-               {currentApp.status === 'Approved' && (
-                <div className="mt-4">
-                   <button className="w-full bg-indigo-500 text-white py-2 rounded-lg hover:bg-indigo-600 transition-colors flex items-center justify-center space-x-2">
-                     <FileDown size={18} />
-                     <span>Generate Admission Letter</span>
-                   </button>
-                </div>
-              )}
-            </div>
-            
-            {showRejectionPrompt && (
-              <div className="mt-4">
-                <textarea
-                  className="w-full p-2 border rounded-md text-sm"
-                  placeholder="Enter reason for rejection..."
-                  value={rejectionReason}
-                  onChange={(e) => setRejectionReason(e.target.value)}
-                />
-                <div className="flex space-x-2 mt-2">
-                  <button onClick={handleReject} className="w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 transition-colors">Confirm Reject</button>
-                  <button onClick={() => setShowRejectionPrompt(false)} className="w-full bg-gray-200 text-gray-800 py-2 rounded-lg hover:bg-gray-300">Cancel</button>
-                </div>
-              </div>
-            )}
-
-            {!showRejectionPrompt && currentApp.status !== 'Approved' && currentApp.status !== 'Rejected' && (
-              <div className="space-y-3 mt-4">
-                <button 
-                  onClick={handleApprove}
-                  disabled={!allDocsVerified || !isEligible || currentApp.status !== 'Verified'}
-                  className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
-                >
-                  <CheckCircle size={20} />
-                  <span>Approve Application</span>
-                </button>
-                <button 
-                  onClick={() => setShowRejectionPrompt(true)}
-                  className="w-full bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center space-x-2"
-                >
-                  <XCircle size={20} />
-                  <span>Reject Application</span>
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const ApplicationsList = ({ applications, onSelectApplication }) => {
-  const [filters, setFilters] = useState({ course: 'All', stream: 'All', status: 'All', searchTerm: '' });
-  const [sortConfig, setSortConfig] = useState({ key: 'submissionDate', direction: 'descending' });
-  
-  const courses = ['All', ...new Set(initialApplications.map(a => a.course))];
-  const streams = ['All', ...new Set(initialApplications.map(a => a.stream))];
-  const statuses = ['All', 'Pending', 'Verified', 'Approved', 'Rejected'];
-
-  const filteredApplications = useMemo(() => {
-    let filtered = applications.filter(app => {
-      return (filters.course === 'All' || app.course === filters.course) &&
-             (filters.stream === 'All' || app.stream === filters.stream) &&
-             (filters.status === 'All' || app.status === filters.status) &&
-             (app.name.toLowerCase().includes(filters.searchTerm.toLowerCase()) || 
-              app.id.toLowerCase().includes(filters.searchTerm.toLowerCase()));
-    });
+    const handleAdmissionStatus = (status) => {
+        let finalApp = { ...app, status };
+        if (status === 'Admitted') {
+            const coursePrefix = app.course.substring(0,4).toUpperCase();
+            const admittedCount = initialApplications.filter(a => a.status === 'Admitted' && a.course === app.course).length;
+            finalApp.rollNo = `${coursePrefix}-${String(admittedCount + 1).padStart(3, '0')}`;
+            finalApp.studentId = `STU-${finalApp.rollNo}`;
+            finalApp.admissionLetter = '#'; // Placeholder for PDF generation
+        }
+        setApplications(prev => prev.map(a => a.id === app.id ? finalApp : a));
+        showNotification(`Application status updated to ${status}. Notification sent to student.`, 'success');
+    };
     
-    filtered.sort((a, b) => {
-        if (a[sortConfig.key] < b[sortConfig.key]) {
-            return sortConfig.direction === 'ascending' ? -1 : 1;
-        }
-        if (a[sortConfig.key] > b[sortConfig.key]) {
-            return sortConfig.direction === 'ascending' ? 1 : -1;
-        }
-        return 0;
-    });
+    const handleFeePayment = () => {
+        const updatedApp = {
+            ...app,
+            fee: { ...app.fee, paid: app.fee.total, status: 'Paid', receipt: `RCPT${String(Math.floor(Math.random() * 900) + 100).padStart(3, '0')}` }
+        };
+        setApplications(prev => prev.map(a => a.id === app.id ? updatedApp : a));
+        showNotification('Fee payment recorded successfully.', 'success');
+    };
 
-    return filtered;
-  }, [applications, filters, sortConfig]);
-  
-  const requestSort = (key) => {
-    let direction = 'ascending';
-    if (sortConfig.key === key && sortConfig.direction === 'ascending') {
-        direction = 'descending';
-    }
-    setSortConfig({ key, direction });
-  };
-  
-  const getSortIcon = (key) => {
-    if (sortConfig.key !== key) return null;
-    return sortConfig.direction === 'ascending' ? <ChevronUp size={14} /> : <ChevronDown size={14} />;
-  };
 
-  return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
-      <h1 className="text-2xl font-bold text-gray-800 mb-4">Applications</h1>
-      
-      {/* Filters */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-4 p-4 bg-gray-50 rounded-lg">
-        <div className="relative col-span-1 lg:col-span-2">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18}/>
-            <input 
-                type="text" 
-                placeholder="Search by name or ID..."
-                className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                value={filters.searchTerm}
-                onChange={e => setFilters({...filters, searchTerm: e.target.value})}
-            />
-        </div>
+    return (
         <div>
-          <select className="w-full p-2 border rounded-lg bg-white" value={filters.course} onChange={e => setFilters({...filters, course: e.target.value})}>
-            {courses.map(c => <option key={c} value={c}>{c}</option>)}
-          </select>
+            <button onClick={onBack} className="text-blue-600 hover:underline mb-4">&larr; Back to Applications</button>
+            <div className="bg-white p-8 rounded-lg shadow-md">
+                <div className="flex justify-between items-start mb-6">
+                    <div>
+                        <h1 className="text-3xl font-bold text-gray-800">{app.name}</h1>
+                        <p className="text-gray-500 font-mono">{app.id} | {app.course}</p>
+                    </div>
+                    <StatusBadge status={app.status} />
+                </div>
+                
+                {/* Admission Details */}
+                {app.status === 'Admitted' && (
+                    <div className="mb-8 p-4 bg-purple-50 border border-purple-200 rounded-lg">
+                        <h3 className="text-lg font-semibold text-purple-800 mb-2">Admission Confirmed</h3>
+                        <p><strong>Roll Number:</strong> {app.rollNo}</p>
+                        <p><strong>Student ID:</strong> {app.studentId}</p>
+                        <a href={app.admissionLetter} className="text-blue-600 hover:underline mt-2 inline-block">Download Admission Letter</a>
+                    </div>
+                )}
+
+                {/* Admission Approval Workflow */}
+                <div className="mb-8">
+                    <h2 className="text-xl font-semibold text-gray-700 border-b pb-2 mb-4">Admission Approval</h2>
+                    <div className="flex space-x-4">
+                        <button onClick={() => handleAdmissionStatus('Approved')} disabled={app.status !== 'Pending Verification' || app.eligibility.result !== 'Eligible'} className="bg-teal-500 text-white px-4 py-2 rounded-lg shadow hover:bg-teal-600 disabled:bg-gray-300">Approve</button>
+                        <button onClick={() => handleAdmissionStatus('Waitlist')} disabled={app.status !== 'Pending Verification' || app.eligibility.result !== 'Eligible'} className="bg-indigo-500 text-white px-4 py-2 rounded-lg shadow hover:bg-indigo-600 disabled:bg-gray-300">Waitlist</button>
+                        <button onClick={() => handleAdmissionStatus('Rejected')} className="bg-red-500 text-white px-4 py-2 rounded-lg shadow hover:bg-red-600">Reject</button>
+                    </div>
+                </div>
+
+                {/* Document Verification */}
+                <div className="mb-8">
+                    <h2 className="text-xl font-semibold text-gray-700 border-b pb-2 mb-4">Document Verification</h2>
+                    <div className="space-y-3">
+                        {app.documents.map(doc => (
+                            <div key={doc.name} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <div>
+                                    <p className="font-medium text-gray-800">{doc.name}</p>
+                                    {doc.status === 'Rejected' && <p className="text-xs text-red-600">Comment: {doc.comment}</p>}
+                                </div>
+                                <div className="flex items-center space-x-4">
+                                    <StatusBadge status={doc.status} />
+                                    <a href={doc.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">View</a>
+                                    <button onClick={() => handleDocStatusChange(doc.name, 'Verified')} className="text-green-600 hover:text-green-800"><CheckCircle size={20}/></button>
+                                    <button onClick={() => {
+                                        const comment = prompt("Reason for rejection:");
+                                        if (comment) handleDocStatusChange(doc.name, 'Rejected', comment);
+                                    }} className="text-red-600 hover:text-red-800"><XCircle size={20}/></button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Eligibility Check */}
+                <div className="mb-8">
+                    <h2 className="text-xl font-semibold text-gray-700 border-b pb-2 mb-4">Eligibility Check</h2>
+                    <div className="flex items-center space-x-4">
+                        <input 
+                            type="number" 
+                            placeholder="Enter Entrance Score / %" 
+                            value={score}
+                            onChange={(e) => setScore(e.target.value)}
+                            className="p-2 border rounded-lg w-48"
+                        />
+                        <button onClick={handleEligibilityCheck} className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600">Check Eligibility</button>
+                        {app.eligibility.checked && <StatusBadge status={app.eligibility.result} />}
+                    </div>
+                     {app.eligibility.checked && app.eligibility.result === 'Not Eligible' && <p className="text-red-600 mt-2">{app.eligibility.reason}</p>}
+                </div>
+
+                {/* Fee Management */}
+                <div>
+                    <h2 className="text-xl font-semibold text-gray-700 border-b pb-2 mb-4">Fee Management</h2>
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                        <p><strong>Status:</strong> <StatusBadge status={app.fee.status} /></p>
+                        <p><strong>Total Fee:</strong> ₹{app.fee.total.toLocaleString()}</p>
+                        <p><strong>Amount Paid:</strong> ₹{app.fee.paid.toLocaleString()}</p>
+                        {app.fee.status === 'Paid' && <p><strong>Receipt No:</strong> {app.fee.receipt}</p>}
+                        
+                        {app.status === 'Approved' && app.fee.status === 'Pending Payment' && (
+                            <button onClick={handleFeePayment} className="mt-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow hover:bg-green-600">Mark as Paid</button>
+                        )}
+                        
+                        {app.status === 'Approved' && app.fee.status === 'Unpaid' && (
+                             <button onClick={handleFeePayment} className="mt-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow hover:bg-green-600">Generate Invoice & Mark as Paid</button>
+                        )}
+                    </div>
+                </div>
+            </div>
         </div>
-        <div>
-          <select className="w-full p-2 border rounded-lg bg-white" value={filters.stream} onChange={e => setFilters({...filters, stream: e.target.value})}>
-            {streams.map(s => <option key={s} value={s}>{s}</option>)}
-          </select>
-        </div>
-        <div>
-          <select className="w-full p-2 border rounded-lg bg-white" value={filters.status} onChange={e => setFilters({...filters, status: e.target.value})}>
-            {statuses.map(s => <option key={s} value={s}>{s}</option>)}
-          </select>
-        </div>
-      </div>
-      
-      {/* Table */}
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm text-left text-gray-500">
-          <thead className="text-xs text-gray-700 uppercase bg-gray-100">
-            <tr>
-              <th scope="col" className="px-6 py-3 cursor-pointer" onClick={() => requestSort('name')}>
-                <div className="flex items-center">Applicant {getSortIcon('name')}</div>
-              </th>
-              <th scope="col" className="px-6 py-3 cursor-pointer" onClick={() => requestSort('course')}>
-                <div className="flex items-center">Course {getSortIcon('course')}</div>
-              </th>
-              <th scope="col" className="px-6 py-3 cursor-pointer" onClick={() => requestSort('submissionDate')}>
-                <div className="flex items-center">Submitted {getSortIcon('submissionDate')}</div>
-              </th>
-              <th scope="col" className="px-6 py-3 cursor-pointer" onClick={() => requestSort('status')}>
-                <div className="flex items-center">Status {getSortIcon('status')}</div>
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Action
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredApplications.map(app => (
-              <tr key={app.id} className="bg-white border-b hover:bg-gray-50">
-                <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                  <div>{app.name}</div>
-                  <div className="text-xs text-gray-500">{app.id}</div>
-                </td>
-                <td className="px-6 py-4">{app.course}</td>
-                <td className="px-6 py-4">{new Date(app.submissionDate).toLocaleDateString()}</td>
-                <td className="px-6 py-4"><StatusBadge status={app.status} /></td>
-                <td className="px-6 py-4">
-                  <button onClick={() => onSelectApplication(app)} className="font-medium text-blue-600 hover:underline">View Details</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        {filteredApplications.length === 0 && <div className="text-center p-8 text-gray-500">No applications found matching your criteria.</div>}
-      </div>
-    </div>
-  );
+    );
 };
 
-
-// --- App Component --- //
-export default function App() {
-  const [activeView, setActiveView] = useState('dashboard');
-  const [applications, setApplications] = useState(initialApplications);
-  const [seats, setSeats] = useState(courseSeats);
-  const [selectedApplication, setSelectedApplication] = useState(null);
-  const [notification, setNotification] = useState({ message: '', type: '' });
-
-  const handleUpdateApplication = (updatedApp) => {
-    setApplications(apps => apps.map(app => app.id === updatedApp.id ? updatedApp : app));
-  };
-  
-  const handleSeatUpdate = (course, change) => {
-      setSeats(prevSeats => ({
-          ...prevSeats,
-          [course]: {
-              ...prevSeats[course],
-              filled: prevSeats[course].filled + change
-          }
-      }));
-  };
-
-  const showNotification = (message, type) => {
-      setNotification({ message, type });
-      setTimeout(() => setNotification({ message: '', type: '' }), 4000);
-  };
-
-  const renderView = () => {
-    switch (activeView) {
-      case 'dashboard':
-        return <Dashboard applications={applications} seats={seats} />;
-      case 'applications':
-        return <ApplicationsList applications={applications} onSelectApplication={setSelectedApplication} />;
-      default:
-        return <Dashboard applications={applications} seats={seats} />;
-    }
-  };
-
-  return (
-    <div className="flex h-screen bg-gray-100 font-sans">
-      {/* Sidebar */}
-      <aside className="w-64 bg-gray-800 text-white flex-shrink-0">
-        <div className="p-6 text-2xl font-bold border-b border-gray-700">
-          🎓 Admission Admin
+const FeeManagement = () => (
+    <div>
+        <h1 className="text-3xl font-bold text-gray-800 mb-6">Fee Structures</h1>
+        <div className="bg-white rounded-lg shadow-md overflow-x-auto">
+            <table className="w-full text-sm text-left text-gray-500">
+                <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+                    <tr>
+                        <th scope="col" className="px-6 py-3">Course</th>
+                        <th scope="col" className="px-6 py-3">Admission Fee</th>
+                        <th scope="col" className="px-6 py-3">Tuition Fee (Annual)</th>
+                        <th scope="col" className="px-6 py-3">Other Charges</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {feeStructures.map(fee => (
+                        <tr key={fee.course} className="bg-white border-b hover:bg-gray-50">
+                            <td className="px-6 py-4 font-medium text-gray-900">{fee.course}</td>
+                            <td className="px-6 py-4">₹{fee.admissionFee.toLocaleString()}</td>
+                            <td className="px-6 py-4">₹{fee.tuitionFee.toLocaleString()}</td>
+                            <td className="px-6 py-4">₹{fee.other.toLocaleString()}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
         </div>
-        <nav className="mt-6">
-          <a href="#" onClick={() => setActiveView('dashboard')} className={`block py-3 px-6 transition-colors ${activeView === 'dashboard' ? 'bg-gray-700' : 'hover:bg-gray-700'}`}>Dashboard</a>
-          <a href="#" onClick={() => setActiveView('applications')} className={`block py-3 px-6 transition-colors ${activeView === 'applications' ? 'bg-gray-700' : 'hover:bg-gray-700'}`}>Applications</a>
-        </nav>
-      </aside>
-
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Header */}
-        <header className="bg-white shadow-md p-4 flex justify-end items-center space-x-4">
-            <button className="text-gray-500 hover:text-gray-700">
-                <Bell size={20} />
-            </button>
-            <div className="flex items-center space-x-2">
-                <User size={20} className="text-gray-600"/>
-                <span className="text-sm font-medium">Admin User</span>
-            </div>
-        </header>
-
-        {/* Content Area */}
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-8">
-          {renderView()}
-        </main>
-      </div>
-      
-      {/* Modal */}
-      {selectedApplication && (
-        <ApplicationDetailsModal 
-          application={selectedApplication} 
-          onClose={() => setSelectedApplication(null)}
-          onUpdate={handleUpdateApplication}
-          onNotify={showNotification}
-          onSeatUpdate={handleSeatUpdate}
-        />
-      )}
-
-      {/* Notification */}
-      <NotificationPopup 
-        message={notification.message} 
-        type={notification.type} 
-        onDismiss={() => setNotification({ message: '', type: '' })}
-      />
     </div>
-  );
+);
+
+const SeatAllocation = ({ applications }) => {
+    const allocatedSeats = useMemo(() => {
+        return seatData.map(seat => {
+            const admitted = applications.filter(app => app.course === seat.course && app.status === 'Admitted').length;
+            const waitlisted = applications.filter(app => app.course === seat.course && app.status === 'Waitlisted').length;
+            return { ...seat, admitted, waitlisted, available: seat.total - admitted };
+        });
+    }, [applications]);
+
+    return (
+        <div>
+            <h1 className="text-3xl font-bold text-gray-800 mb-6">Seat Allocation</h1>
+            <div className="bg-white rounded-lg shadow-md overflow-x-auto">
+                <table className="w-full text-sm text-left text-gray-500">
+                    <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+                        <tr>
+                            <th scope="col" className="px-6 py-3">Course</th>
+                            <th scope="col" className="px-6 py-3">Total Seats</th>
+                            <th scope="col" className="px-6 py-3">Admitted</th>
+                            <th scope="col" className="px-6 py-3">Available</th>
+                            <th scope="col" className="px-6 py-3">Waitlisted</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {allocatedSeats.map(seat => (
+                            <tr key={seat.course} className="bg-white border-b hover:bg-gray-50">
+                                <td className="px-6 py-4 font-medium text-gray-900">{seat.course}</td>
+                                <td className="px-6 py-4">{seat.total}</td>
+                                <td className="px-6 py-4 text-green-600 font-semibold">{seat.admitted}</td>
+                                <td className="px-6 py-4 text-blue-600 font-semibold">{seat.available}</td>
+                                <td className="px-6 py-4 text-indigo-600">{seat.waitlisted}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    );
+};
+
+// --- MAIN APP COMPONENT --- //
+export default function App() {
+    const [currentPage, setCurrentPage] = useState('dashboard');
+    const [enquiries, setEnquiries] = useState(initialEnquiries);
+    const [applications, setApplications] = useState(initialApplications);
+    const [selectedAppId, setSelectedAppId] = useState(null);
+    const [notification, setNotification] = useState({ message: '', type: '' });
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+    const showNotification = (message, type) => {
+        setNotification({ message, type });
+        setTimeout(() => setNotification({ message: '', type: '' }), 4000);
+    };
+
+    const handleSelectApplication = (id) => {
+        setSelectedAppId(id);
+        setCurrentPage('applicationDetails');
+    };
+
+    const handleBackToApplications = () => {
+        setSelectedAppId(null);
+        setCurrentPage('applications');
+    };
+    
+    const navigate = (page) => {
+        setCurrentPage(page);
+        setIsSidebarOpen(false);
+    }
+
+    const renderPage = () => {
+        if (currentPage === 'applicationDetails' && selectedAppId) {
+            const app = applications.find(a => a.id === selectedAppId);
+            return <ApplicationDetails app={app} setApplications={setApplications} onBack={handleBackToApplications} showNotification={showNotification}/>;
+        }
+        switch (currentPage) {
+            case 'dashboard':
+                return <Dashboard applications={applications} enquiries={enquiries} />;
+            case 'enquiries':
+                return <EnquiryManagement enquiries={enquiries} setEnquiries={setEnquiries} />;
+            case 'applications':
+                return <ApplicationList applications={applications} onSelectApplication={handleSelectApplication} />;
+            case 'fees':
+                return <FeeManagement />;
+            case 'seats':
+                return <SeatAllocation applications={applications} />;
+            default:
+                return <Dashboard applications={applications} enquiries={enquiries} />;
+        }
+    };
+
+    const NavLink = ({ page, icon, children }) => (
+        <button
+            onClick={() => navigate(page)}
+            className={`flex items-center w-full text-left px-4 py-3 rounded-lg transition-colors duration-200 ${currentPage === page ? 'bg-blue-500 text-white' : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'}`}
+        >
+            {icon}
+            <span className="ml-3">{children}</span>
+        </button>
+    );
+
+    return (
+        <div className="bg-gray-100 min-h-screen font-sans flex">
+            <Notification message={notification.message} type={notification.type} onDismiss={() => setNotification({ message: '', type: '' })} />
+            
+            {/* Sidebar for Desktop */}
+            <aside className="hidden lg:block w-64 bg-white shadow-lg flex-shrink-0">
+                <div className="p-6">
+                    <h2 className="text-2xl font-bold text-blue-600">Admissions CRM</h2>
+                </div>
+                <nav className="mt-6 px-4 space-y-2">
+                    <NavLink page="dashboard" icon={<Home size={20} />}>Dashboard</NavLink>
+                    <NavLink page="enquiries" icon={<UserPlus size={20} />}>Enquiry Management</NavLink>
+                    <NavLink page="applications" icon={<FileText size={20} />}>Applications</NavLink>
+                    <NavLink page="fees" icon={<DollarSign size={20} />}>Fee Structures</NavLink>
+                    <NavLink page="seats" icon={<List size={20} />}>Seat Allocation</NavLink>
+                </nav>
+            </aside>
+
+            {/* Mobile Sidebar */}
+            <div className={`fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden ${isSidebarOpen ? 'block' : 'hidden'}`} onClick={() => setIsSidebarOpen(false)}></div>
+            <aside className={`fixed top-0 left-0 h-full w-64 bg-white shadow-lg z-40 transform transition-transform duration-300 ease-in-out lg:hidden ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+                 <div className="p-6">
+                    <h2 className="text-2xl font-bold text-blue-600">Admissions CRM</h2>
+                </div>
+                <nav className="mt-6 px-4 space-y-2">
+                    <NavLink page="dashboard" icon={<Home size={20} />}>Dashboard</NavLink>
+                    <NavLink page="enquiries" icon={<UserPlus size={20} />}>Enquiry Management</NavLink>
+                    <NavLink page="applications" icon={<FileText size={20} />}>Applications</NavLink>
+                    <NavLink page="fees" icon={<DollarSign size={20} />}>Fee Structures</NavLink>
+                    <NavLink page="seats" icon={<List size={20} />}>Seat Allocation</NavLink>
+                </nav>
+            </aside>
+
+
+            <div className="flex-1 flex flex-col">
+                <header className="bg-white shadow-sm p-4 flex justify-between items-center">
+                    <button className="lg:hidden text-gray-600" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                    <div className="relative w-full max-w-xs hidden md:block">
+                        <input type="text" placeholder="Search applications..." className="w-full pl-10 pr-4 py-2 border rounded-full bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                    </div>
+                    <div className="flex items-center space-x-4">
+                        <button className="text-gray-500 hover:text-gray-700">
+                            <Bell size={22} />
+                        </button>
+                        <div className="flex items-center">
+                            <img src="https://placehold.co/40x40/E2E8F0/4A5568?text=A" alt="Admin" className="w-10 h-10 rounded-full" />
+                            <div className="ml-2 hidden md:block">
+                                <p className="font-semibold text-sm">Admin User</p>
+                                <p className="text-xs text-gray-500">System Administrator</p>
+                            </div>
+                            <ChevronDown size={20} className="ml-1 text-gray-500" />
+                        </div>
+                    </div>
+                </header>
+                <main className="flex-1 p-6 md:p-8 overflow-y-auto">
+                    {renderPage()}
+                </main>
+            </div>
+        </div>
+    );
 }
