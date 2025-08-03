@@ -1949,7 +1949,7 @@ export default function App() {
         {isSidebarOpen ? (
           <div className="flex items-center gap-2">
              <School size={32} className="text-blue-600"/>
-             <h1 className="text-xl font-bold text-gray-800">Student ERP</h1>
+             <h4 className=" font-bold text-gray-800">Student ERP</h4>
           </div>
         ) : (
            <School size={32} className="text-blue-600"/>
