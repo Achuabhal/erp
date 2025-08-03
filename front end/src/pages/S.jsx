@@ -24,7 +24,8 @@ import {
   FileText,
   ChevronLeft,
   ChevronRight,
-  Bell,CalendarDays,
+  Bell,
+  CalendarDays,
   Search,
   Menu,
   X,
@@ -39,11 +40,13 @@ import {
   AlertTriangle,
   Info,
   ToggleLeft,
-  ToggleRight,GraduationCap,
+  ToggleRight,
+  GraduationCap,
   School,
 } from "lucide-react";
 
-// Mock Data
+// --- MOCK DATA ---
+
 const studentData = {
   name: "Alex Thompson",
   department: "Computer Science & Engineering",
@@ -148,7 +151,7 @@ const assignments = [
     id: 1,
     subject: "Data Structures",
     title: "Binary Tree Implementation",
-    dueDate: "2024-08-15",
+    dueDate: "2025-08-15",
     status: "Submitted",
     feedback:
       "Good work. A bit more optimization possible in the search function.",
@@ -157,7 +160,7 @@ const assignments = [
     id: 2,
     subject: "Database Systems",
     title: "Normalization Assignment",
-    dueDate: "2024-08-20",
+    dueDate: "2025-08-20",
     status: "Pending",
     feedback: null,
   },
@@ -165,7 +168,7 @@ const assignments = [
     id: 3,
     subject: "Operating Systems",
     title: "Process Scheduling Simulation",
-    dueDate: "2024-08-10",
+    dueDate: "2025-08-10",
     status: "Graded",
     feedback: "Excellent implementation of the FCFS algorithm.",
   },
@@ -231,32 +234,32 @@ const financeDetails = {
       name: "Installment 1",
       amount: 50000,
       status: "Paid",
-      dueDate: "2024-07-01",
+      dueDate: "2025-07-01",
     },
     {
       name: "Installment 2",
       amount: 50000,
       status: "Paid",
-      dueDate: "2024-01-15",
+      dueDate: "2025-01-15",
     },
     {
       name: "Installment 3",
       amount: 25000,
       status: "Due",
-      dueDate: "2024-08-30",
+      dueDate: "2025-08-30",
     },
   ],
   history: [
     {
       id: 1,
-      date: "2024-07-01",
+      date: "2025-07-01",
       amount: 50000,
       type: "Installment 1",
       receipt: "#",
     },
     {
       id: 2,
-      date: "2024-01-15",
+      date: "2025-01-15",
       amount: 25000,
       type: "Partial - Inst. 2",
       receipt: "#",
@@ -286,22 +289,88 @@ const jobListings = [
 ];
 
 const calendarEvents = [
-  { id: 1, title: "Mid-Term Exams", date: "2024-09-05", type: "academic" },
+  { id: 1, title: "Mid-Term Exams", date: "2025-09-05", type: "academic" },
   {
     id: 2,
     title: 'Tech Fest "Innovate"',
-    date: "2024-09-20",
+    date: "2025-09-20",
     type: "cultural",
   },
   {
     id: 3,
     title: "Placement Drive: TechCorp",
-    date: "2024-08-25",
+    date: "2025-08-25",
     type: "placement",
   },
 ];
 
-// Helper Components
+const studentTimetable = {
+  studentName: "Aman Kumar",
+  class: "10",
+  section: "A",
+  timetable: {
+    Monday: [
+      { time: "9:00 - 10:00", subject: "Mathematics", teacher: "Mrs. Sharma" },
+      { time: "10:00 - 11:00", subject: "Science", teacher: "Mr. Rao" },
+    ],
+    Tuesday: [
+      { time: "9:00 - 10:00", subject: "English", teacher: "Mrs. Das" },
+      { time: "10:00 - 11:00", subject: "Mathematics", teacher: "Mrs. Sharma" },
+    ],
+    Wednesday: [
+      { time: "9:00 - 10:00", subject: "Science", teacher: "Mr. Rao" },
+      { time: "10:00 - 11:00", subject: "Computer", teacher: "Mr. Iyer" },
+    ],
+    Thursday: [
+      { time: "9:00 - 10:00", subject: "English", teacher: "Mrs. Das" },
+      { time: "10:00 - 11:00", subject: "Mathematics", teacher: "Mrs. Sharma" },
+    ],
+    Friday: [
+      { time: "9:00 - 10:00", subject: "Science", teacher: "Mr. Rao" },
+      { time: "10:00 - 11:00", subject: "Computer", teacher: "Mr. Iyer" },
+    ],
+    Saturday: [],
+    Sunday: [],
+  },
+};
+
+const coCurricularActivities = [
+    { id: 1, name: "Robotics Club", fee: 5000, seats: 25 },
+    { id: 2, name: "Debate Society", fee: 1500, seats: 40 },
+    { id: 3, name: "Photography Club", fee: 3000, seats: 30 },
+    { id: 4, name: "Music Band", fee: 4000, seats: 15 },
+    { id: 5, name: "Coding Club", fee: 2000, seats: 50 },
+];
+
+const examQuestions = {
+    NEET: [
+        {
+            question: "Which of the following is a plant hormone?",
+            options: ["Insulin", "Thyroxin", "Gibberellin", "Estrogen"],
+            correctAnswer: "Gibberellin",
+        },
+        {
+            question: "The powerhouse of the cell is?",
+            options: ["Nucleus", "Mitochondria", "Ribosome", "Lysosome"],
+            correctAnswer: "Mitochondria",
+        },
+    ],
+    JEE: [
+        {
+            question: "What is the value of sin(90 degrees)?",
+            options: ["0", "0.5", "1", "-1"],
+            correctAnswer: "1",
+        },
+        {
+            question: "The rate of change of velocity is called?",
+            options: ["Speed", "Displacement", "Acceleration", "Force"],
+            correctAnswer: "Acceleration",
+        },
+    ],
+};
+
+// --- HELPER COMPONENTS ---
+
 const Card = ({ children, className = "" }) => (
   <div
     className={`bg-white rounded-xl shadow-md p-6 transition-all hover:shadow-lg ${className}`}
@@ -328,6 +397,8 @@ const StatusChip = ({ status }) => {
     Graded: "bg-green-100 text-green-800",
     Due: "bg-red-100 text-red-800",
     Paid: "bg-green-100 text-green-800",
+    Approved: "bg-green-100 text-green-800",
+    Rejected: "bg-red-100 text-red-800",
   };
   return (
     <span
@@ -340,7 +411,8 @@ const StatusChip = ({ status }) => {
   );
 };
 
-// Main Module Components
+// --- MAIN MODULE COMPONENTS ---
+
 const DashboardOverview = () => (
   <div className="space-y-8">
     <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-8 rounded-xl shadow-lg">
@@ -1314,7 +1386,7 @@ const CalendarAndEvents = () => {
     <Card>
       <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
         <h2 className="text-xl font-bold text-gray-800">Calendar & Events</h2>
-        <button className="flex items-center space-x-2 px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition-colors group">
+        <button className="flex items-center space-x-2 px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition-colors group relative">
           <svg
             className="w-5 h-5"
             fill="currentColor"
@@ -1328,7 +1400,7 @@ const CalendarAndEvents = () => {
             />
           </svg>
           <span>Sync with Google Calendar</span>
-          <span className="absolute -top-10 left-1/2 -translate-x-1/2 w-max px-2 py-1 bg-gray-900 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
+          <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-max px-2 py-1 bg-gray-900 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
             Sync exams and deadlines
           </span>
         </button>
@@ -1449,8 +1521,6 @@ const Reports = () => (
   </Card>
 );
 
-//student and teacher messaging
-
 const StudentMessaging = () => {
   const [selectedTeacher, setSelectedTeacher] = useState(teachers[0]);
   const [messages, setMessages] = useState(mockChatData[selectedTeacher] || []);
@@ -1465,11 +1535,11 @@ const StudentMessaging = () => {
     const msg = {
       from: "student",
       text: newMessage,
-      time: new Date().toLocaleTimeString(),
+      time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
     };
     const updated = [...messages, msg];
     setMessages(updated);
-    mockChatData[selectedTeacher] = updated;
+    mockChatData[selectedTeacher] = updated; // Note: this mutates mock data
     setNewMessage("");
   };
 
@@ -1490,47 +1560,52 @@ const StudentMessaging = () => {
         </select>
       </div>
 
-      <div className="bg-gray-50 h-60 overflow-y-auto p-4 rounded-lg space-y-2">
-        {messages.map((msg, i) => (
-          <div
-            key={i}
-            className={`flex ${
-              msg.from === "student" ? "justify-end" : "justify-start"
-            }`}
-          >
+      <div className="bg-gray-50 h-80 overflow-y-auto p-4 rounded-lg space-y-2">
+        {messages.length > 0 ? (
+          messages.map((msg, i) => (
             <div
-              className={`p-2 rounded-md text-sm max-w-xs ${
-                msg.from === "student"
-                  ? "bg-blue-100 text-right"
-                  : "bg-green-100"
+              key={i}
+              className={`flex ${
+                msg.from === "student" ? "justify-end" : "justify-start"
               }`}
             >
-              <p>{msg.text}</p>
-              <p className="text-xs text-gray-500 mt-1">{msg.time}</p>
+              <div
+                className={`p-3 rounded-lg text-sm max-w-xs shadow-sm ${
+                  msg.from === "student"
+                    ? "bg-blue-500 text-white"
+                    : "bg-white"
+                }`}
+              >
+                <p>{msg.text}</p>
+                <p className={`text-xs mt-1 ${msg.from === 'student' ? 'text-blue-200' : 'text-gray-500'}`}>{msg.time}</p>
+              </div>
             </div>
+          ))
+        ) : (
+          <div className="flex justify-center items-center h-full">
+            <p className="text-gray-500">No messages yet. Start a conversation!</p>
           </div>
-        ))}
+        )}
       </div>
 
       <div className="flex mt-4">
         <input
-          className="flex-grow border p-2 rounded-l-md"
+          className="flex-grow border p-2 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
           placeholder="Type a message..."
         />
         <button
           onClick={sendMessage}
-          className="bg-blue-500 text-white px-4 rounded-r-md"
+          className="bg-blue-600 text-white px-4 rounded-r-md hover:bg-blue-700"
         >
-          <Send size={16} />
+          <Send size={20} />
         </button>
       </div>
     </Card>
   );
 };
-
-//od application
 
 const ODApplication = () => {
   const [teacher, setTeacher] = useState(teachers[0]);
@@ -1538,8 +1613,13 @@ const ODApplication = () => {
   const [submitted, setSubmitted] = useState(false);
   const [status, setStatus] = useState("Pending");
 
-  const handleSubmit = () => {
-    if (!reason.trim()) return alert("Please provide a reason");
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!reason.trim()) {
+        // In a real app, you'd show a more user-friendly error message.
+        console.error("Please provide a reason");
+        return;
+    }
     setSubmitted(true);
     // Simulate status update by teacher after 2 seconds
     setTimeout(() => setStatus("Approved"), 2000);
@@ -1549,11 +1629,11 @@ const ODApplication = () => {
     <Card>
       <h2 className="text-xl font-bold mb-4 text-gray-800">OD Application</h2>
       {!submitted ? (
-        <div className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium">Select Teacher</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Select Teacher</label>
             <select
-              className="w-full border p-2 rounded-md"
+              className="w-full border p-2 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={teacher}
               onChange={(e) => setTeacher(e.target.value)}
             >
@@ -1563,137 +1643,245 @@ const ODApplication = () => {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium">Reason</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Reason</label>
             <textarea
-              className="w-full border p-2 rounded-md"
+              className="w-full border p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               rows={4}
-              placeholder="Explain your OD request..."
+              placeholder="Explain your OD request (e.g., Attending workshop, sports event, etc.)"
+              required
             />
           </div>
           <button
-            onClick={handleSubmit}
-            className="bg-blue-600 text-white px-4 py-2 rounded-md"
+            type="submit"
+            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
           >
             Submit OD Request
           </button>
-        </div>
+        </form>
       ) : (
-        <div className="space-y-2">
+        <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
+          <h3 className="font-semibold text-lg text-gray-800">Request Submitted</h3>
           <p className="text-sm text-gray-700">
-            Submitted to: <strong>{teacher}</strong>
+            <strong>To:</strong> {teacher}
           </p>
           <p className="text-sm text-gray-700">
-            Reason: <em>{reason}</em>
+            <strong>Reason:</strong> <em>{reason}</em>
           </p>
-          <StatusChip status={status} />
+          <div className="flex items-center space-x-2">
+            <p className="text-sm font-medium">Status:</p>
+            <StatusChip status={status} />
+          </div>
         </div>
       )}
     </Card>
   );
 };
 
-
-
-
-
-
-
-
-
-
-
-const studentTimetable = {
-  studentName: "Aman Kumar",
-  class: "10",
-  section: "A",
-  timetable: {
-    Monday: [
-      { time: "9:00 - 10:00", subject: "Mathematics", teacher: "Mrs. Sharma" },
-      { time: "10:00 - 11:00", subject: "Science", teacher: "Mr. Rao" },
-    ],
-    Tuesday: [
-      { time: "9:00 - 10:00", subject: "English", teacher: "Mrs. Das" },
-      { time: "10:00 - 11:00", subject: "Mathematics", teacher: "Mrs. Sharma" },
-    ],
-    Wednesday: [
-      { time: "9:00 - 10:00", subject: "Science", teacher: "Mr. Rao" },
-      { time: "10:00 - 11:00", subject: "Computer", teacher: "Mr. Iyer" },
-    ],
-    Thursday: [
-      { time: "9:00 - 10:00", subject: "English", teacher: "Mrs. Das" },
-      { time: "10:00 - 11:00", subject: "Mathematics", teacher: "Mrs. Sharma" },
-    ],
-    Friday: [
-      { time: "9:00 - 10:00", subject: "Science", teacher: "Mr. Rao" },
-      { time: "10:00 - 11:00", subject: "Computer", teacher: "Mr. Iyer" },
-    ],
-  },
-};
-
 const StudentTimetable = () => {
   const days = Object.keys(studentTimetable.timetable);
-  const today = new Date().toLocaleDateString("en-IN", { weekday: "long" });
+  const today = new Date().toLocaleDateString("en-US", { weekday: "long" });
 
   return (
-    <div className="p-6">
+    <Card>
       <div className="flex items-center gap-3 mb-6">
-        <CalendarDays className="text-blue-600" />
+        <CalendarDays className="text-blue-600 w-8 h-8" />
         <div>
-          <h2 className="text-2xl font-bold">Current Semester Timetable</h2>
+          <h2 className="text-2xl font-bold text-gray-800">Semester Timetable</h2>
           <p className="text-sm text-gray-500">
-            Timetable for {studentTimetable.studentName} (Class {studentTimetable.class}-{studentTimetable.section})
+            Class {studentTimetable.class}-{studentTimetable.section}
           </p>
         </div>
       </div>
 
       <div className="overflow-x-auto">
-        <table className="min-w-full bg-white border rounded shadow text-sm">
+        <table className="min-w-full bg-white border rounded-lg shadow-sm text-sm">
           <thead className="bg-gray-100">
             <tr>
-              <th className="px-4 py-2 text-left">Day</th>
-              <th className="px-4 py-2 text-left">Time</th>
-              <th className="px-4 py-2 text-left">Subject</th>
-              <th className="px-4 py-2 text-left">Teacher</th>
+              <th className="px-4 py-3 text-left font-semibold text-gray-600">Day</th>
+              <th className="px-4 py-3 text-left font-semibold text-gray-600">Time</th>
+              <th className="px-4 py-3 text-left font-semibold text-gray-600">Subject</th>
+              <th className="px-4 py-3 text-left font-semibold text-gray-600">Teacher</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-gray-200">
             {days.map((day) =>
-              studentTimetable.timetable[day].map((slot, index) => (
-                <tr
-                  key={`${day}-${index}`}
-                  className={
-                    day === today ? "bg-blue-50 border-t" : "border-t"
-                  }
-                >
-                  {index === 0 && (
-                    <td
-                      rowSpan={studentTimetable.timetable[day].length}
-                      className="px-4 py-2 font-semibold text-gray-700"
-                    >
-                      {day}
-                    </td>
-                  )}
-                  <td className="px-4 py-2">{slot.time}</td>
-                  <td className="px-4 py-2">{slot.subject}</td>
-                  <td className="px-4 py-2">{slot.teacher}</td>
-                </tr>
-              ))
+              studentTimetable.timetable[day].length > 0 ? (
+                studentTimetable.timetable[day].map((slot, index) => (
+                  <tr
+                    key={`${day}-${index}`}
+                    className={
+                      day === today ? "bg-blue-50" : "hover:bg-gray-50"
+                    }
+                  >
+                    {index === 0 && (
+                      <td
+                        rowSpan={studentTimetable.timetable[day].length}
+                        className="px-4 py-3 font-semibold text-gray-800 align-top"
+                      >
+                        {day}
+                      </td>
+                    )}
+                    <td className="px-4 py-3 text-gray-600">{slot.time}</td>
+                    <td className="px-4 py-3 font-medium text-gray-900">{slot.subject}</td>
+                    <td className="px-4 py-3 text-gray-600">{slot.teacher}</td>
+                  </tr>
+                ))
+              ) : (
+                 <tr key={day} className="hover:bg-gray-50">
+                    <td className="px-4 py-3 font-semibold text-gray-800">{day}</td>
+                    <td colSpan="3" className="px-4 py-3 text-center text-gray-400">No Classes Scheduled</td>
+                 </tr>
+              )
             )}
           </tbody>
         </table>
       </div>
-    </div>
+    </Card>
   );
 };
 
+const CoCurricular = () => (
+    <Card>
+        <h2 className="text-2xl font-bold text-gray-800 mb-6">Co-Curricular Activities</h2>
+        <div className="overflow-x-auto">
+            <table className="min-w-full bg-white text-sm">
+                <thead className="bg-gray-100">
+                    <tr>
+                        <th className="px-4 py-3 text-left font-semibold text-gray-600">Activity Name</th>
+                        <th className="px-4 py-3 text-left font-semibold text-gray-600">Fee (INR)</th>
+                        <th className="px-4 py-3 text-left font-semibold text-gray-600">Seats Available</th>
+                        <th className="px-4 py-3 text-left font-semibold text-gray-600">Action</th>
+                    </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                    {coCurricularActivities.map(activity => (
+                        <tr key={activity.id} className="hover:bg-gray-50">
+                            <td className="px-4 py-3 font-medium text-gray-900">{activity.name}</td>
+                            <td className="px-4 py-3 text-gray-600">{activity.fee.toLocaleString()}</td>
+                            <td className="px-4 py-3 text-gray-600">{activity.seats}</td>
+                            <td className="px-4 py-3">
+                                <button className="px-4 py-2 bg-blue-600 text-white text-xs font-semibold rounded-lg hover:bg-blue-700">
+                                    Register
+                                </button>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+    </Card>
+);
+
+const ExamModule = () => {
+    const [activeExam, setActiveExam] = useState("NEET");
+    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+    const [userAnswers, setUserAnswers] = useState({});
+    const [showResults, setShowResults] = useState(false);
+    const [score, setScore] = useState(0);
+
+    const questions = examQuestions[activeExam];
+    const currentQuestion = questions[currentQuestionIndex];
+
+    const handleAnswerSelect = (questionIndex, answer) => {
+        setUserAnswers({
+            ...userAnswers,
+            [questionIndex]: answer,
+        });
+    };
+
+    const handleNext = () => {
+        if (currentQuestionIndex < questions.length - 1) {
+            setCurrentQuestionIndex(currentQuestionIndex + 1);
+        }
+    };
+
+    const handleSubmit = () => {
+        let newScore = 0;
+        questions.forEach((q, index) => {
+            if (userAnswers[index] === q.correctAnswer) {
+                newScore++;
+            }
+        });
+        setScore(newScore);
+        setShowResults(true);
+    };
+    
+    const restartExam = () => {
+        setActiveExam("NEET");
+        setCurrentQuestionIndex(0);
+        setUserAnswers({});
+        setShowResults(false);
+        setScore(0);
+    }
+
+    if (showResults) {
+        return (
+            <Card>
+                <h2 className="text-2xl font-bold text-center mb-4">Exam Results</h2>
+                <div className="text-center p-8 bg-gray-50 rounded-lg">
+                    <p className="text-lg text-gray-700">You scored</p>
+                    <p className="text-6xl font-bold text-blue-600 my-2">{score} / {questions.length}</p>
+                    <button onClick={restartExam} className="mt-6 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                        Take Another Exam
+                    </button>
+                </div>
+            </Card>
+        );
+    }
+
+    return (
+        <Card>
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">MCQ Exam Portal</h2>
+            <div className="flex border-b mb-4">
+                <button 
+                    onClick={() => setActiveExam("NEET")}
+                    className={`py-2 px-4 text-sm font-medium ${activeExam === 'NEET' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'}`}
+                >
+                    NEET
+                </button>
+                <button 
+                    onClick={() => setActiveExam("JEE")}
+                    className={`py-2 px-4 text-sm font-medium ${activeExam === 'JEE' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'}`}
+                >
+                    JEE
+                </button>
+            </div>
+            
+            <div>
+                <p className="text-sm text-gray-500 mb-2">Question {currentQuestionIndex + 1} of {questions.length}</p>
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">{currentQuestion.question}</h3>
+                <div className="space-y-3">
+                    {currentQuestion.options.map(option => (
+                        <button 
+                            key={option}
+                            onClick={() => handleAnswerSelect(currentQuestionIndex, option)}
+                            className={`w-full text-left p-3 border rounded-lg transition-colors ${userAnswers[currentQuestionIndex] === option ? 'bg-blue-500 text-white border-blue-500' : 'hover:bg-gray-100'}`}
+                        >
+                            {option}
+                        </button>
+                    ))}
+                </div>
+                <div className="flex justify-end mt-6">
+                    {currentQuestionIndex < questions.length - 1 ? (
+                        <button onClick={handleNext} className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                            Next
+                        </button>
+                    ) : (
+                        <button onClick={handleSubmit} className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+                            Submit
+                        </button>
+                    )}
+                </div>
+            </div>
+        </Card>
+    );
+};
 
 
+// --- MAIN APP COMPONENT ---
 
-
-
-// Main App Component
 export default function App() {
   const [activePage, setActivePage] = useState("Dashboard");
   const [isSidebarOpen, setSidebarOpen] = useState(true);
@@ -1705,43 +1893,34 @@ export default function App() {
     { name: "Finance & Fees", icon: <DollarSign size={20} /> },
     { name: "Profile & Docs", icon: <User size={20} /> },
     { name: "AI Tools", icon: <Bot size={20} /> },
-{ name: "Time Table", icon: <CalendarDays size={20} /> },
+    { name: "Time Table", icon: <CalendarDays size={20} /> },
     { name: "Placement Portal", icon: <Briefcase size={20} /> },
     { name: "Calendar & Events", icon: <Calendar size={20} /> },
     { name: "Communication", icon: <MessageSquare size={20} /> },
     { name: "Reports", icon: <FileText size={20} /> },
     { name: "OD Application", icon: <FileText size={20} /> },
     { name: "Message Teacher", icon: <MessageSquare size={20} /> },
+    { name: "Co-Curricular", icon: <Star size={20} /> },
+    { name: "Exam Portal", icon: <GraduationCap size={20} /> },
   ];
 
   const renderPage = () => {
     switch (activePage) {
-      case "Dashboard":
-        return <DashboardOverview />;
-      case "Academics":
-        return <Academics />;
-      case "Finance & Fees":
-        return <Finance />;
-      case "Profile & Docs":
-        return <Profile />;
-      case "AI Tools":
-        return <AITools />;
-         case "Time Table":
-        return <StudentTimetable/>;
-      case "Placement Portal":
-        return <PlacementPortal />;
-      case "Calendar & Events":
-        return <CalendarAndEvents />;
-      case "Communication":
-        return <Communication />;
-      case "Reports":
-        return <Reports />;
-      case "OD Application":
-        return <ODApplication />;
-      case "Message Teacher":
-        return <StudentMessaging />;
-      default:
-        return <DashboardOverview />;
+      case "Dashboard": return <DashboardOverview />;
+      case "Academics": return <Academics />;
+      case "Finance & Fees": return <Finance />;
+      case "Profile & Docs": return <Profile />;
+      case "AI Tools": return <AITools />;
+      case "Time Table": return <StudentTimetable />;
+      case "Placement Portal": return <PlacementPortal />;
+      case "Calendar & Events": return <CalendarAndEvents />;
+      case "Communication": return <Communication />;
+      case "Reports": return <Reports />;
+      case "OD Application": return <ODApplication />;
+      case "Message Teacher": return <StudentMessaging />;
+      case "Co-Curricular": return <CoCurricular />;
+      case "Exam Portal": return <ExamModule />;
+      default: return <DashboardOverview />;
     }
   };
 
@@ -1756,29 +1935,14 @@ export default function App() {
           isSidebarOpen ? "" : "justify-center"
         }`}
       >
-      {isSidebarOpen ? (
-  <div className="flex items-center gap-2 pl-4 pt-4">
-    <img
-      src="/images/logo.jpeg"
-      alt="Logo"
-      className="w-12 h-12 object-contain"
-    />
-    <h1 className="!text-2xl font-semibold text-gray-900 leading-tight mt-[-2px]">
-      Student <br /> ERP
-    </h1>
-  </div>
-) : (
-  <div className="flex justify-center pt-4">
-    <img
-      src="/images/logo.jpeg"
-      alt="Logo"
-      className="w-12 h-12 object-contain"
-    />
-  </div>
-)}
-
-
-
+        {isSidebarOpen ? (
+          <div className="flex items-center gap-2">
+             <School size={32} className="text-blue-600"/>
+             <h1 className="text-xl font-bold text-gray-800">Student ERP</h1>
+          </div>
+        ) : (
+           <School size={32} className="text-blue-600"/>
+        )}
 
         <button
           onClick={() => setSidebarOpen(!isSidebarOpen)}
@@ -1787,7 +1951,6 @@ export default function App() {
           {isSidebarOpen ? <ChevronLeft /> : <ChevronRight />}
         </button>
       </div>
-      {/* FIXED: Added overflow-y-auto for scrollability on smaller screens */}
       <nav className="flex-grow p-2 space-y-1 overflow-y-auto">
         {items.map((item) => (
           <button
@@ -1801,6 +1964,7 @@ export default function App() {
                 ? "bg-blue-500 text-white shadow-md"
                 : "text-gray-600 hover:bg-gray-100"
             } ${isSidebarOpen ? "" : "justify-center"}`}
+            title={isSidebarOpen ? "" : item.name}
           >
             {item.icon}
             {isSidebarOpen && <span>{item.name}</span>}
@@ -1811,13 +1975,11 @@ export default function App() {
   );
 
   return (
-
-<div className="flex h-screen bg-gray-50 font-sans">
+    <div className="flex h-screen bg-gray-100 font-sans">
       {/* Desktop Sidebar */}
-      <div className="hidden lg:flex  lg:w-64 lg:flex-col lg:h-full lg:bg-white lg:shadow">
-  <Sidebar items={menuItems} />
-</div>
-
+      <div className="hidden lg:block">
+        <Sidebar items={menuItems} />
+      </div>
 
       {/* Mobile Sidebar */}
       <div
@@ -1841,7 +2003,7 @@ export default function App() {
       </div>
 
       <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="flex items-center justify-between p-4 bg-white border-b h-24">
+        <header className="flex items-center justify-between p-4 bg-white border-b h-24 shrink-0">
           <div className="flex items-center">
             <button
               onClick={() => setMobileMenuOpen(true)}
@@ -1862,8 +2024,9 @@ export default function App() {
             </div>
           </div>
           <div className="flex items-center space-x-4">
-            <button className="p-2 rounded-full hover:bg-gray-100">
+            <button className="p-2 rounded-full hover:bg-gray-100 relative">
               <Bell />
+              <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
             </button>
             <div className="flex items-center space-x-2">
               <img

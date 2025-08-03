@@ -657,37 +657,63 @@ const StudentPerformanceInsights = () => {
     return (
         <div className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-                <Card className="lg:col-span-3">
-                    <h3 className="font-bold text-lg mb-4">Subject-wise Marks Distribution</h3>
-                    <div className="flex items-end h-64 space-x-4 p-4 border rounded-lg bg-gray-50">
-                        {['DSA', 'Algo', 'OS', 'DBMS', 'CN'].map((subject) => (
-                            <div key={subject} className="flex-1 flex flex-col items-center justify-end">
-                                <div className="w-full bg-indigo-500 rounded-t-lg hover:bg-indigo-600 transition-colors text-white flex items-center justify-center text-xs font-bold" style={{ height: `${Math.random() * 70 + 25}%` }}>
-                                    {Math.floor(Math.random() * 20 + 75)}
-                                </div>
-                                <p className="text-xs mt-2">{subject}</p>
-                            </div>
-                        ))}
-                    </div>
-                </Card>
+               <Card className="lg:col-span-3">
+  <h3 className="font-bold text-lg mb-4">Subject-wise Marks Distribution (Average of 120 Students)</h3>
+  <div className="flex items-end h-64 space-x-4 p-4 border rounded-lg bg-gray-50">
+    {['DSA', 'Algo', 'OS', 'DBMS', 'CN'].map((subject) => {
+      // Simulate average marks between 60 to 95
+      const averageMark = Math.floor(Math.random() * 35 + 60); // 60 to 95
+      const barHeight = `${(averageMark / 100) * 100}%`; // height proportional to 100 marks
+
+      return (
+        <div key={subject} className="flex-1 flex flex-col items-center justify-end">
+          <div
+            className="w-full bg-indigo-500 rounded-t-lg hover:bg-indigo-600 transition-colors text-white flex items-center justify-center text-xs font-bold"
+            style={{ height: barHeight }}
+          >
+            {averageMark}
+          </div>
+          <p className="text-xs mt-2">{subject}</p>
+        </div>
+      );
+    })}
+  </div>
+</Card>
+
                 <Card className="lg:col-span-2">
-                    <h3 className="font-bold text-lg mb-4">At-Risk Students</h3>
-                     <p className="text-sm text-gray-500 mb-4">Low attendance or marks.</p>
-                    <ul className="space-y-2">
-                        {mockData.students.filter(s => s.attendance < 80 || s.marks < 50).slice(0, 3).map(s => (
-                            <li key={s.id} className="flex items-center justify-between p-3 bg-red-50 border border-red-200 rounded-lg">
-                                <div className="flex items-center gap-3">
-                                    <img src={s.avatar} alt={s.name} className="w-8 h-8 rounded-full" />
-                                    <div>
-                                        <p className="font-semibold">{s.name}</p>
-                                        <p className="text-xs text-red-700">Att: {s.attendance}% / Marks: {s.marks}</p>
-                                    </div>
-                                </div>
-                                <button className={btnSecondarySmClasses}>Alert</button>
-                            </li>
-                        ))}
-                    </ul>
-                </Card>
+    <h3 className="font-bold text-lg mb-4">At-Risk Students</h3>
+    <p className="text-sm text-gray-500 mb-4">Low attendance or marks.</p>
+
+    {/* Wrapper with fixed height and scroll */}
+    <div className="max-h-64 overflow-y-auto pr-2">
+        <ul className="space-y-2">
+            {mockData.students
+                .filter(s => s.attendance < 80 || s.marks < 50)
+                .map(s => (
+                    <li
+                        key={s.id}
+                        className="flex items-center justify-between p-3 bg-red-50 border border-red-200 rounded-lg"
+                    >
+                        <div className="flex items-center gap-3">
+                            <img
+                                src={s.avatar}
+                                alt={s.name}
+                                className="w-8 h-8 rounded-full"
+                            />
+                            <div>
+                                <p className="font-semibold">{s.name}</p>
+                                <p className="text-xs text-red-700">
+                                    Att: {s.attendance}% / Marks: {s.marks}
+                                </p>
+                            </div>
+                        </div>
+                        <button className={btnSecondarySmClasses}>Alert</button>
+                    </li>
+                ))}
+        </ul>
+    </div>
+</Card>
+
             </div>
             <Card>
                 <div className="flex justify-between items-center mb-4">
@@ -713,7 +739,7 @@ const StudentPerformanceInsights = () => {
                              </tr>
                          </thead>
                          <tbody>
-                             {filteredStudents().slice(0, 5).map(student => (
+                             {filteredStudents().map(student => (
                                  <tr key={student.id} className="border-b hover:bg-gray-50">
                                      <td className="p-3 flex items-center gap-3">
                                          <img src={student.avatar} alt={student.name} className="w-8 h-8 rounded-full" />
