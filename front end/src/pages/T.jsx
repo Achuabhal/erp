@@ -7,6 +7,9 @@ const Icon = ({ path, className = "w-6 h-6" }) => (
   </svg>
 );
 
+
+import { School } from 'lucide-react';
+
 const HomeIcon = (props) => <Icon path="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" {...props} />;
 const BookOpenIcon = (props) => <Icon path="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" {...props} />;
 const MessageSquareIcon = (props) => <Icon path="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" {...props} />;
@@ -67,7 +70,7 @@ const mockData = {
              { time: "14:00 - 16:00", subject: "Data Structures Lab", room: "Lab-I", type: "Practical" },
         ]
     },
-    students: Array.from({ length: 25 }, (_, i) => ({
+    students: Array.from({ length: 120}, (_, i) => ({
         id: `STU${101 + i}`,
         name: `Student ${i + 1}`,
         avatar: `https://i.pravatar.cc/150?u=student${i}`,
@@ -158,12 +161,17 @@ const Sidebar = ({ activeView, setActiveView, isOpen, setOpen }) => {
                 ${isOpen ? 'translate-x-0' : '-translate-x-full'}
                 md:translate-x-0 ${isOpen ? 'md:w-64' : 'md:w-20'}`}>
                 
-                <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200">
-                    <span className={`font-bold text-xl text-indigo-600 transition-opacity ${!isOpen && 'md:opacity-0 md:hidden'}`}>ERP</span>
-                    <button onClick={() => setOpen(!isOpen)} className="p-2 text-gray-500 rounded-lg hover:bg-gray-100">
-                       {isOpen ? <XIcon /> : <MenuIcon />}
-                    </button>
-                </div>
+<div className="flex items-center justify-between h-16 px-4 border-b border-gray-200">
+  <span className={`flex items-center gap-2 font-bold text-xl text-indigo-600 transition-opacity ${!isOpen && 'md:opacity-0 md:hidden'}`}>
+    <School className="w-6 h-6" /> ERP
+  </span>
+  <button
+    onClick={() => setOpen(!isOpen)}
+    className="p-2 text-gray-500 rounded-lg hover:bg-gray-100"
+  >
+    {isOpen ? <XIcon /> : <MenuIcon />}
+  </button>
+</div>
                 <nav className="mt-6">
                     <ul>
                         {navItems.map(item => (
@@ -441,7 +449,7 @@ const AttendanceManagement = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {mockData.students.slice(0, 10).map(student => (
+                        {mockData.students.slice(0, 120).map(student => (
                             <tr key={student.id} className="border-b">
                                 <td className="p-3 font-mono">{student.id}</td>
                                 <td className="p-3 flex items-center gap-3">
@@ -574,7 +582,7 @@ const MarksAndExamUploads = () => (
                     </tr>
                 </thead>
                 <tbody>
-                    {mockData.students.slice(0, 5).map(student => (
+                    {mockData.students.slice(0, 120).map(student => (
                         <tr key={student.id} className="border-b">
                             <td className="p-3 font-mono">{student.id}</td>
                             <td className="p-3">{student.name}</td>

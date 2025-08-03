@@ -40,6 +40,7 @@ import {
   Info,
   ToggleLeft,
   ToggleRight,GraduationCap,
+  School,
 } from "lucide-react";
 
 // Mock Data
@@ -1757,7 +1758,7 @@ export default function App() {
       >
       {isSidebarOpen ? (
   <div className="flex items-center gap-2 pl-4 pt-4">
-    <GraduationCap className="w-8 h-8 text-blue-600" strokeWidth={2} />
+    <School className="w-8 h-8 text-blue-600" strokeWidth={2} />
     <h1 className="!text-2xl font-semibold text-gray-900 leading-tight mt-[-2px]">
   Student <br /> ERP
 </h1>
@@ -1765,7 +1766,7 @@ export default function App() {
   </div>
 ) : (
   <div className="flex justify-center pt-4">
-    <GraduationCap className="w-8 h-8 text-blue-600" strokeWidth={2.2} />
+    <School className="w-8 h-8 text-blue-600" strokeWidth={2} />
   </div>
 )}
 

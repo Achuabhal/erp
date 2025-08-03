@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
-
+import { School } from 'lucide-react';
 // --- MOCK DATA --- //
 const facultyData = [
     { id: 1, name: 'Dr. Evelyn Reed', photo: 'https://placehold.co/100x100/E2E8F0/4A5568?text=ER', subject: 'Quantum Physics', workload: 18, status: 'Active' },
@@ -942,10 +942,19 @@ export default function App() {
             <aside className={`bg-white text-gray-800 flex flex-col h-full shadow-lg relative transition-all duration-300 ease-in-out ${isSidebarOpen ? 'w-64' : 'w-20'}`}>
                 <div className={`flex items-center h-20 border-b border-gray-200 ${isSidebarOpen ? 'justify-start px-6' : 'justify-center'}`}>
                      {isSidebarOpen ? (
-                        <h1 className="text-2xl font-bold text-indigo-600">HOD Panel</h1>
-                    ) : (
-                        <div className="text-indigo-600">{icons.dashboard}</div>
-                    )}
+  <div className="flex items-center gap-2 pl-4 pt-4">
+    <School className="w-8 h-8 text-blue-600" strokeWidth={2} />
+    <h1 className="!text-2xl font-semibold text-gray-900 leading-tight mt-[-2px]">
+  HOD <br /> ERP
+</h1>
+
+  </div>
+) : (
+  <div className="flex justify-center pt-4">
+    <School className="w-8 h-8 text-blue-600" strokeWidth={2} />
+  </div>
+)}
+
                 </div>
                 <nav className="flex-1 mt-6 overflow-y-auto">
                     <ul>
