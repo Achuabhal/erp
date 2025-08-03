@@ -924,11 +924,16 @@ const Finance = () => {
             ₹{financeDetails.paid.toLocaleString()}
           </p>
         </Card>
-        <Card className="text-center">
+        <Card className="text-center relative">
           <p className="text-sm text-gray-500">Amount Due</p>
           <p className="text-3xl font-bold text-red-600">
             ₹{financeDetails.due.toLocaleString()}
           </p>
+           {financeDetails.due > 0 && (
+            <button className="mt-2 px-4 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700">
+                Pay Now
+            </button>
+           )}
         </Card>
       </div>
       <Card>
@@ -963,7 +968,13 @@ const Finance = () => {
                   ₹{item.amount.toLocaleString()}
                 </p>
               </div>
-              <StatusChip status={item.status} />
+              {item.status === 'Due' ? (
+                <button className="px-4 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700">
+                  Pay Now
+                </button>
+              ) : (
+                <StatusChip status={item.status} />
+              )}
             </div>
           ))}
         </div>
