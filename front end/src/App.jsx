@@ -18,7 +18,7 @@ function App() {
         <Route path="/imp" element={<GenerateForm />} />
         {/* Add more routes as needed */}
          <Route path="/f" element={<FeeManagementDashboard/>} />
-        <Route path="/admission" element={<Admin/>} />       
+        <Route path="/admission" element={<Admission/>} />       
 
       </Routes>
     </Router>
