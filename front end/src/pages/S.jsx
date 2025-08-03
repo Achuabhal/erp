@@ -267,27 +267,6 @@ const financeDetails = {
   ],
 };
 
-const jobListings = [
-  {
-    id: 1,
-    role: "Frontend Developer",
-    company: "Innovate Inc.",
-    location: "Remote",
-  },
-  {
-    id: 2,
-    role: "Backend Engineer",
-    company: "Data Solutions",
-    location: "New York",
-  },
-  {
-    id: 3,
-    role: "UI/UX Designer",
-    company: "Creative Minds",
-    location: "San Francisco",
-  },
-];
-
 const calendarEvents = [
   { id: 1, title: "Mid-Term Exams", date: "2025-09-05", type: "academic" },
   {
@@ -1148,250 +1127,6 @@ const Profile = () => {
   );
 };
 
-const AITools = () => {
-  const [activeTool, setActiveTool] = useState("CV");
-
-  return (
-    <div className="space-y-6">
-      <div className="flex justify-center space-x-2 bg-gray-100 p-1 rounded-xl">
-        <button
-          onClick={() => setActiveTool("CV")}
-          className={`px-4 py-2 text-sm font-medium rounded-lg ${
-            activeTool === "CV" ? "bg-white shadow" : "text-gray-600"
-          }`}
-        >
-          CV Analyzer
-        </button>
-        <button
-          onClick={() => setActiveTool("Study")}
-          className={`px-4 py-2 text-sm font-medium rounded-lg ${
-            activeTool === "Study" ? "bg-white shadow" : "text-gray-600"
-          }`}
-        >
-          Study Bot
-        </button>
-        <button
-          onClick={() => setActiveTool("Prep")}
-          className={`px-4 py-2 text-sm font-medium rounded-lg ${
-            activeTool === "Prep" ? "bg-white shadow" : "text-gray-600"
-          }`}
-        >
-          Placement Prep
-        </button>
-      </div>
-      {activeTool === "CV" && <CVAnalyzer />}
-      {activeTool === "Study" && <StudyBot />}
-      {activeTool === "Prep" && <PlacementPrepBot />}
-    </div>
-  );
-};
-
-const CVAnalyzer = () => {
-  const score = 88; // Mock score
-  return (
-    <Card>
-      <h2 className="text-xl font-bold text-gray-800 mb-4 text-center">
-        CV Analyzer
-      </h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-        <div className="flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-xl">
-          <Upload size={48} className="text-gray-400 mb-4" />
-          <p className="text-gray-600 mb-4">
-            Upload your resume to get instant feedback.
-          </p>
-          <button className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-            Upload CV
-          </button>
-        </div>
-        <div className="flex flex-col items-center">
-          <div className="relative w-40 h-40">
-            <svg className="w-full h-full" viewBox="0 0 36 36">
-              <path
-                className="text-gray-200"
-                strokeWidth="3"
-                fill="none"
-                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-              />
-              <path
-                className="text-purple-600"
-                strokeWidth="3"
-                strokeDasharray={`${score}, 100`}
-                strokeLinecap="round"
-                fill="none"
-                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-              />
-            </svg>
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-3xl font-bold text-purple-700">
-              {score}%
-            </div>
-          </div>
-          <p className="mt-4 text-lg font-medium text-gray-700">
-            Your CV Score
-          </p>
-          <div className="mt-4 w-full space-y-2 text-sm">
-            <p className="flex justify-between">
-              <span>Keywords:</span>{" "}
-              <span className="font-semibold text-green-600">Excellent</span>
-            </p>
-            <p className="flex justify-between">
-              <span>Formatting:</span>{" "}
-              <span className="font-semibold text-yellow-600">Good</span>
-            </p>
-            <p className="flex justify-between">
-              <span>Impact:</span>{" "}
-              <span className="font-semibold text-green-600">Excellent</span>
-            </p>
-          </div>
-        </div>
-      </div>
-    </Card>
-  );
-};
-
-const StudyBot = () => (
-  <Card className="h-[60vh] flex flex-col">
-    <h2 className="text-xl font-bold text-gray-800 mb-4">Study Bot</h2>
-    <div className="flex-grow bg-gray-50 rounded-lg p-4 space-y-4 overflow-y-auto">
-      <div className="flex justify-start">
-        <div className="bg-white p-3 rounded-lg max-w-xs shadow-sm">
-          Hello! How can I help you with your studies today?
-        </div>
-      </div>
-      <div className="flex justify-end">
-        <div className="bg-blue-500 text-white p-3 rounded-lg max-w-xs shadow-sm">
-          Explain the concept of normalization in databases.
-        </div>
-      </div>
-    </div>
-    <div className="mt-4 flex space-x-2">
-      <input
-        type="text"
-        placeholder="Ask a question..."
-        className="flex-grow p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-      <button className="p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex-shrink-0">
-        <Send size={20} />
-      </button>
-    </div>
-  </Card>
-);
-
-const PlacementPrepBot = () => (
-  <Card>
-    <h2 className="text-xl font-bold text-gray-800 mb-4 text-center">
-      Placement Prep Bot
-    </h2>
-    <div className="p-6 border rounded-xl bg-gray-50">
-      <p className="text-gray-500 text-center mb-2">Aptitude Question</p>
-      <p className="text-lg text-gray-800 text-center">
-        If a train 110 meters long passes a telegraph pole in 3 seconds, then
-        the time taken by it to cross a railway platform 165 meters long is:
-      </p>
-      <div className="grid grid-cols-2 gap-4 mt-6">
-        <button className="p-3 border rounded-lg hover:bg-gray-100">
-          7.5 seconds
-        </button>
-        <button className="p-3 border rounded-lg hover:bg-gray-100">
-          10 seconds
-        </button>
-        <button className="p-3 border rounded-lg hover:bg-gray-100">
-          12.5 seconds
-        </button>
-        <button className="p-3 border rounded-lg hover:bg-gray-100">
-          15 seconds
-        </button>
-      </div>
-    </div>
-    <div className="flex justify-center space-x-4 mt-4">
-      <span className="flex items-center space-x-1 text-sm bg-green-100 text-green-800 px-3 py-1 rounded-full">
-        <ThumbsUp size={14} /> Correct!
-      </span>
-      <span className="flex items-center space-x-1 text-sm bg-red-100 text-red-800 px-3 py-1 rounded-full">
-        <ThumbsDown size={14} /> Try Again
-      </span>
-    </div>
-  </Card>
-);
-
-const PlacementPortal = () => (
-  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-    <div className="lg:col-span-2 space-y-6">
-      <Card>
-        <h2 className="text-xl font-bold text-gray-800 mb-4">Job Listings</h2>
-        <div className="flex flex-wrap gap-4 mb-4">
-          <input
-            type="text"
-            placeholder="Role, Company"
-            className="p-2 border rounded-md"
-          />
-          <input
-            type="text"
-            placeholder="Location"
-            className="p-2 border rounded-md"
-          />
-          <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-            Filter
-          </button>
-        </div>
-        <div className="space-y-4">
-          {jobListings.map((job) => (
-            <div
-              key={job.id}
-              className="p-4 border rounded-lg flex justify-between items-center"
-            >
-              <div>
-                <h3 className="font-bold text-gray-800">{job.role}</h3>
-                <p className="text-sm text-gray-500">
-                  {job.company} - {job.location}
-                </p>
-              </div>
-              <button className="px-4 py-2 text-sm bg-blue-100 text-blue-800 rounded-lg hover:bg-blue-200">
-                Apply
-              </button>
-            </div>
-          ))}
-        </div>
-      </Card>
-    </div>
-    <div className="space-y-6">
-      <Card>
-        <h2 className="text-xl font-bold text-gray-800 mb-4">
-          Application Tracker
-        </h2>
-        <div className="space-y-3 text-sm">
-          <p className="flex justify-between">
-            <span>Innovate Inc.</span>
-            <StatusChip status="Submitted" />
-          </p>
-          <p className="flex justify-between">
-            <span>Data Solutions</span>
-            <StatusChip status="Pending" />
-          </p>
-        </div>
-      </Card>
-      <Card>
-        <h2 className="text-xl font-bold text-gray-800 mb-4">
-          Quiz Leaderboard
-        </h2>
-        <div className="space-y-3 text-sm">
-          <p className="flex justify-between items-center">
-            <span>1. Sarah Jenkins</span>{" "}
-            <span className="font-bold">1500 pts</span>
-          </p>
-          <p className="flex justify-between items-center bg-blue-50 p-2 rounded-md">
-            <span>2. Alex Thompson</span>{" "}
-            <span className="font-bold">1450 pts</span>
-          </p>
-          <p className="flex justify-between items-center">
-            <span>3. Mike Ross</span>{" "}
-            <span className="font-bold">1420 pts</span>
-          </p>
-        </div>
-      </Card>
-    </div>
-  </div>
-);
-
 const CalendarAndEvents = () => {
   return (
     <Card>
@@ -1903,9 +1638,7 @@ export default function App() {
     { name: "Academics", icon: <BookOpen size={20} /> },
     { name: "Finance & Fees", icon: <DollarSign size={20} /> },
     { name: "Profile & Docs", icon: <User size={20} /> },
-    { name: "AI Tools", icon: <Bot size={20} /> },
     { name: "Time Table", icon: <CalendarDays size={20} /> },
-    { name: "Placement Portal", icon: <Briefcase size={20} /> },
     { name: "Calendar & Events", icon: <Calendar size={20} /> },
     { name: "Communication", icon: <MessageSquare size={20} /> },
     { name: "Reports", icon: <FileText size={20} /> },
@@ -1921,9 +1654,7 @@ export default function App() {
       case "Academics": return <Academics />;
       case "Finance & Fees": return <Finance />;
       case "Profile & Docs": return <Profile />;
-      case "AI Tools": return <AITools />;
       case "Time Table": return <StudentTimetable />;
-      case "Placement Portal": return <PlacementPortal />;
       case "Calendar & Events": return <CalendarAndEvents />;
       case "Communication": return <Communication />;
       case "Reports": return <Reports />;
@@ -1949,7 +1680,7 @@ export default function App() {
         {isSidebarOpen ? (
           <div className="flex items-center gap-2">
              <School size={32} className="text-blue-600"/>
-             <h4 className=" font-bold text-gray-800">Student ERP</h4>
+             <h1 className="text-xl font-bold text-gray-800">Student ERP</h1>
           </div>
         ) : (
            <School size={32} className="text-blue-600"/>
