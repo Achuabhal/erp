@@ -5,7 +5,7 @@ import AboutPage from "./pages/H";
 import ContactPage from "./pages/T";
 import GenerateForm from "./pages/GenerateForm";
 import FeeManagementDashboard from "./pages/F";
-import Admin from "./pages/Admin";
+import Admission from "./pages/admission";
 // Import your pages
 
 function App() {
@@ -18,7 +18,7 @@ function App() {
         <Route path="/imp" element={<GenerateForm />} />
         {/* Add more routes as needed */}
          <Route path="/f" element={<FeeManagementDashboard/>} />
-        <Route path="/admin" element={<Admin/>} />       
+        <Route path="/admission" element={<Admin/>} />       
 
       </Routes>
     </Router>
