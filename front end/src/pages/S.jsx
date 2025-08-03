@@ -1758,17 +1758,25 @@ export default function App() {
       >
       {isSidebarOpen ? (
   <div className="flex items-center gap-2 pl-4 pt-4">
-    <School className="w-8 h-8 text-blue-600" strokeWidth={2} />
+    <img
+      src="/images/logo.jpeg"
+      alt="Logo"
+      className="w-12 h-12 object-contain"
+    />
     <h1 className="!text-2xl font-semibold text-gray-900 leading-tight mt-[-2px]">
-  Student <br /> ERP
-</h1>
-
+      Student <br /> ERP
+    </h1>
   </div>
 ) : (
   <div className="flex justify-center pt-4">
-    <School className="w-8 h-8 text-blue-600" strokeWidth={2} />
+    <img
+      src="/images/logo.jpeg"
+      alt="Logo"
+      className="w-12 h-12 object-contain"
+    />
   </div>
 )}
+
 
 
 

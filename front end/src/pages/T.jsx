@@ -163,7 +163,8 @@ const Sidebar = ({ activeView, setActiveView, isOpen, setOpen }) => {
                 
 <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200">
   <span className={`flex items-center gap-2 font-bold text-xl text-indigo-600 transition-opacity ${!isOpen && 'md:opacity-0 md:hidden'}`}>
-    <School className="w-6 h-6" /> ERP
+    <img src="/images/logo.jpeg" alt="ERP Logo" className="w-12 h-12 object-contain" />
+    ERP
   </span>
   <button
     onClick={() => setOpen(!isOpen)}
@@ -172,6 +173,7 @@ const Sidebar = ({ activeView, setActiveView, isOpen, setOpen }) => {
     {isOpen ? <XIcon /> : <MenuIcon />}
   </button>
 </div>
+
                 <nav className="mt-6">
                     <ul>
                         {navItems.map(item => (
