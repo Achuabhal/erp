@@ -62,6 +62,17 @@ const initialApplications = [
     eligibility: { checked: true, result: 'Not Eligible', reason: 'Minimum qualification percentage not met.', score: 55 },
     fee: { total: 120000, paid: 0, status: 'Unpaid' },
   },
+  {
+    id: 'APP2025006', name: 'Priya Patel', course: 'Business Administration', status: 'Admitted',
+    documents: [
+      { name: 'Photo', status: 'Verified', url: '#' },
+      { name: 'ID Proof', status: 'Verified', url: '#' },
+      { name: 'Marksheets', status: 'Verified', url: '#' },
+    ],
+    eligibility: { checked: true, result: 'Eligible', score: 95 },
+    fee: { total: 180000, paid: 180000, status: 'Paid', receipt: 'RCPT002' },
+    rollNo: 'BBA-001', studentId: 'STU-BBA-001', admissionLetter: '#'
+  },
 ];
 
 const feeStructures = [
@@ -156,15 +167,30 @@ const Dashboard = ({ applications, enquiries }) => {
         return Object.entries(counts).map(([name, value]) => ({ name, value }));
     }, [applications]);
 
+    // Data for the stacked bar chart
     const courseWiseData = useMemo(() => {
-        const counts = applications.reduce((acc, app) => {
-            acc[app.course] = (acc[app.course] || 0) + 1;
+        const courseStatusCounts = applications.reduce((acc, app) => {
+            if (!acc[app.course]) {
+                acc[app.course] = { name: app.course };
+            }
+            acc[app.course][app.status] = (acc[app.course][app.status] || 0) + 1;
             return acc;
         }, {});
-        return Object.entries(counts).map(([name, applications]) => ({ name, applications }));
+        return Object.values(courseStatusCounts);
     }, [applications]);
 
-    const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF', '#FF4560'];
+    const allStatuses = useMemo(() => [...new Set(applications.map(app => app.status))], [applications]);
+
+    const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF', '#FF4560', '#A239EA'];
+    const STATUS_CHART_COLORS = {
+        'Admitted': '#8B5CF6',
+        'Pending Verification': '#F59E0B',
+        'Approved': '#14B8A6',
+        'Waitlisted': '#6366F1',
+        'Rejected': '#EF4444',
+        'Paid': '#10B981',
+    };
+
 
     return (
         <div>
@@ -178,15 +204,22 @@ const Dashboard = ({ applications, enquiries }) => {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div className="bg-white p-6 rounded-lg shadow-md">
-                    <h3 className="text-lg font-semibold text-gray-700 mb-4">Course-wise Applications</h3>
+                    <h3 className="text-lg font-semibold text-gray-700 mb-4">Course-wise Application Status</h3>
                     <ResponsiveContainer width="100%" height={300}>
-                        <BarChart data={courseWiseData}>
+                        <BarChart data={courseWiseData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis dataKey="name" angle={-15} textAnchor="end" height={50} tick={{ fontSize: 12 }} />
                             <YAxis />
                             <Tooltip />
                             <Legend />
-                            <Bar dataKey="applications" fill="#8884d8" />
+                            {allStatuses.map((status, index) => (
+                                <Bar 
+                                    key={status} 
+                                    dataKey={status} 
+                                    stackId="a" 
+                                    fill={STATUS_CHART_COLORS[status] || COLORS[index % COLORS.length]} 
+                                />
+                            ))}
                         </BarChart>
                     </ResponsiveContainer>
                 </div>
@@ -206,7 +239,7 @@ const Dashboard = ({ applications, enquiries }) => {
                                 label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
                             >
                                 {applicationStatusData.map((entry, index) => (
-                                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                    <Cell key={`cell-${index}`} fill={STATUS_CHART_COLORS[entry.name] || COLORS[index % COLORS.length]} />
                                 ))}
                             </Pie>
                             <Tooltip />
@@ -224,7 +257,8 @@ const EnquiryManagement = ({ enquiries, setEnquiries }) => {
 
     const handleAddEnquiry = () => {
         if (!newEnquiry.name || !newEnquiry.contact || !newEnquiry.course) {
-            alert("Please fill all fields.");
+            // Replaced alert with a more user-friendly notification system in a real app
+            console.error("Please fill all fields.");
             return;
         }
         const newEntry = {
