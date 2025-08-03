@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
 
 // HELPER: Icon Components (using inline SVG for portability)
+// This is a general-purpose Icon component that renders an SVG path.
 const Icon = ({ path, className = "w-6 h-6" }) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
     <path d={path} />
   </svg>
 );
 
-
-import { School } from 'lucide-react';
-
+// Specific Icon components for easier use throughout the application.
 const HomeIcon = (props) => <Icon path="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" {...props} />;
 const BookOpenIcon = (props) => <Icon path="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" {...props} />;
 const MessageSquareIcon = (props) => <Icon path="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" {...props} />;
@@ -30,9 +29,11 @@ const MicIcon = (props) => <Icon path="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3
 const LogOutIcon = (props) => <Icon path="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" {...props} />;
 const FilterIcon = (props) => <Icon path="M22 3H2l8 9.46V19l4 2v-8.54L22 3z" {...props} />;
 const XIcon = (props) => <Icon path="M18 6 6 18M6 6l12 12" {...props} />;
+const TrophyIcon = (props) => <Icon path="M12 2L9 5H3v14h18V5h-6zM3 21h18M12 5v16" {...props} />;
+const AlertTriangleIcon = (props) => <Icon path="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01" {...props} />;
 
 
-// Mock Data
+// Mock Data for demonstration purposes
 const mockData = {
     teacher: {
         name: "Dr. Evelyn Reed",
@@ -68,7 +69,9 @@ const mockData = {
         ],
         "Friday": [
              { time: "14:00 - 16:00", subject: "Data Structures Lab", room: "Lab-I", type: "Practical" },
-        ]
+        ],
+        "Saturday": [],
+        "Sunday": []
     },
     students: Array.from({ length: 120}, (_, i) => ({
         id: `STU${101 + i}`,
@@ -78,12 +81,50 @@ const mockData = {
         marks: Math.floor(Math.random() * 60 + 40),
     })),
     assignments: [
-        { id: 1, title: "API Design Document", submitted: 20, total: 25, deadline: "2024-07-30", late: 2 },
-        { id: 2, title: "Linked List Implementation", submitted: 25, total: 25, deadline: "2024-07-25", late: 0 },
+        { id: 1, title: "API Design Document", submitted: 20, total: 25, deadline: "2025-08-10", late: 2 },
+        { id: 2, title: "Linked List Implementation", submitted: 25, total: 25, deadline: "2025-08-01", late: 0 },
+    ],
+    competitiveExams: [
+        {
+            id: 1, name: "JEE Mains", year: 2025, class: 'All', totalAppeared: 85, totalQualified: 60,
+            subjects: [
+                { name: 'Physics', avgScore: 78 },
+                { name: 'Chemistry', avgScore: 82 },
+                { name: 'Math', avgScore: 71 },
+            ],
+            lowPerformingClasses: []
+        },
+        {
+            id: 2, name: "NEET", year: 2025, class: 'All', totalAppeared: 40, totalQualified: 35,
+            subjects: [
+                { name: 'Physics', avgScore: 85 },
+                { name: 'Chemistry', avgScore: 88 },
+                { name: 'Biology', avgScore: 91 },
+            ],
+            lowPerformingClasses: []
+        },
+        {
+            id: 3, name: "CET", year: 2025, class: 'CS-B', totalAppeared: 30, totalQualified: 11,
+            subjects: [
+                { name: 'Physics', avgScore: 55 },
+                { name: 'Chemistry', avgScore: 61 },
+                { name: 'Math', avgScore: 45 },
+            ],
+            lowPerformingClasses: ['CS-B']
+        },
+         {
+            id: 4, name: "JEE Advanced", year: 2024, class: 'All', totalAppeared: 50, totalQualified: 30,
+            subjects: [
+                { name: 'Physics', avgScore: 68 },
+                { name: 'Chemistry', avgScore: 75 },
+                { name: 'Math', avgScore: 65 },
+            ],
+            lowPerformingClasses: ['CS-A']
+        },
     ]
 };
 
-// Reusable Tailwind CSS class strings
+// Reusable Tailwind CSS class strings for consistent styling
 const btnPrimaryClasses = "bg-indigo-600 text-white font-semibold px-4 py-2 rounded-lg shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 flex items-center justify-center";
 const btnSecondaryClasses = "bg-white text-gray-700 font-semibold px-4 py-2 rounded-lg border border-gray-300 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 flex items-center justify-center";
 const btnSecondarySmClasses = "bg-white text-gray-700 font-semibold px-3 py-1 text-sm rounded-md border border-gray-300 shadow-sm hover:bg-gray-50";
@@ -92,11 +133,12 @@ const labelClasses = "block text-sm font-medium text-gray-600 mb-1";
 const tagClasses = "bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-1 rounded-full";
 
 
-// Main Components
+// Main App Component: The root of the application
 const App = () => {
     const [activeView, setActiveView] = useState('dashboard');
     const [isSidebarOpen, setSidebarOpen] = useState(false);
 
+    // Effect to handle responsive sidebar behavior
     useEffect(() => {
         const handleResize = () => {
             if (window.innerWidth >= 768) {
@@ -106,14 +148,16 @@ const App = () => {
             }
         };
         window.addEventListener('resize', handleResize);
-        handleResize(); // Initial check
+        handleResize(); // Initial check on component mount
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
+    // Renders the main content based on the active view
     const renderView = () => {
         switch (activeView) {
             case 'dashboard': return <DashboardOverview />;
             case 'academics': return <AcademicManagement />;
+            case 'exams': return <CompetitiveExamOverview />;
             case 'communication': return <CommunicationTools />;
             case 'performance': return <StudentPerformanceInsights />;
             case 'profile': return <ProfileAndTeachingInfo />;
@@ -135,10 +179,12 @@ const App = () => {
     );
 };
 
+// Sidebar Component: Navigation for the application
 const Sidebar = ({ activeView, setActiveView, isOpen, setOpen }) => {
     const navItems = [
         { id: 'dashboard', icon: HomeIcon, label: 'Dashboard' },
         { id: 'academics', icon: BookOpenIcon, label: 'Academics' },
+        { id: 'exams', icon: TrophyIcon, label: 'Exams' },
         { id: 'communication', icon: MessageSquareIcon, label: 'Communication' },
         { id: 'performance', icon: BarChart3Icon, label: 'Performance' },
         { id: 'profile', icon: UserIcon, label: 'Profile' },
@@ -147,6 +193,7 @@ const Sidebar = ({ activeView, setActiveView, isOpen, setOpen }) => {
 
     const handleNavClick = (id) => {
         setActiveView(id);
+        // Close sidebar on mobile after navigation
         if (window.innerWidth < 768) {
             setOpen(false);
         }
@@ -154,27 +201,33 @@ const Sidebar = ({ activeView, setActiveView, isOpen, setOpen }) => {
 
     return (
         <>
-            {/* Overlay for mobile */}
+            {/* Overlay for mobile view when sidebar is open */}
             {isOpen && <div onClick={() => setOpen(false)} className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"></div>}
 
-            <div className={`fixed top-0 left-0 h-full bg-white border-r border-gray-200 z-40 transition-transform duration-300 ease-in-out
+            <aside className={`fixed top-0 left-0 h-full bg-white border-r border-gray-200 z-40 transition-transform duration-300 ease-in-out
                 ${isOpen ? 'translate-x-0' : '-translate-x-full'}
                 md:translate-x-0 ${isOpen ? 'md:w-64' : 'md:w-20'}`}>
                 
-<div className="flex items-center justify-between h-16 px-4 border-b border-gray-200">
-  <span className={`flex items-center gap-2 font-bold text-xl text-indigo-600 transition-opacity ${!isOpen && 'md:opacity-0 md:hidden'}`}>
-    <img src="/images/logo.jpeg" alt="ERP Logo" className="w-12 h-12 object-contain" />
-    ERP
-  </span>
-  <button
-    onClick={() => setOpen(!isOpen)}
-    className="p-2 text-gray-500 rounded-lg hover:bg-gray-100"
-  >
-    {isOpen ? <XIcon /> : <MenuIcon />}
-  </button>
-</div>
+                <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200">
+                    <div className={`flex items-center gap-2 font-bold text-xl text-indigo-600 transition-opacity ${!isOpen && 'md:opacity-0 md:pointer-events-none'}`}>
+                        <img 
+                            src="https://placehold.co/100x100/6366f1/ffffff?text=ERP" 
+                            alt="ERP Logo" 
+                            className="w-10 h-10 object-contain rounded-md"
+                            onError={(e) => { e.target.onerror = null; e.target.src='https://placehold.co/100x100/cccccc/ffffff?text=Error'; }}
+                         />
+                        <span className="whitespace-nowrap">Portal</span>
+                    </div>
+                    <button
+                        onClick={() => setOpen(!isOpen)}
+                        className="p-2 text-gray-500 rounded-lg hover:bg-gray-100 md:hidden"
+                        aria-label="Toggle Sidebar"
+                    >
+                        {isOpen ? <XIcon /> : <MenuIcon />}
+                    </button>
+                </div>
 
-                <nav className="mt-6">
+                <nav className="mt-6 flex flex-col justify-between" style={{height: 'calc(100% - 4rem)'}}>
                     <ul>
                         {navItems.map(item => (
                             <li key={item.id} className="px-3">
@@ -187,27 +240,28 @@ const Sidebar = ({ activeView, setActiveView, isOpen, setOpen }) => {
                                             : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900'
                                     }`}
                                 >
-                                    <item.icon className="w-5 h-5" />
+                                    <item.icon className="w-5 h-5 flex-shrink-0" />
                                     <span className={`ml-4 whitespace-nowrap transition-opacity ${!isOpen && 'md:opacity-0 md:hidden'}`}>{item.label}</span>
                                 </a>
                             </li>
                         ))}
                     </ul>
+                     <div className={`w-full px-3 mb-4`}>
+                         <a
+                             href="#"
+                             className={`flex items-center px-4 py-3 my-1 rounded-lg transition-colors duration-200 text-gray-500 hover:bg-red-50 hover:text-red-600`}
+                         >
+                             <LogOutIcon className="w-5 h-5 flex-shrink-0" />
+                             <span className={`ml-4 whitespace-nowrap transition-opacity ${!isOpen && 'md:opacity-0 md:hidden'}`}>Logout</span>
+                         </a>
+                     </div>
                 </nav>
-                 <div className={`absolute bottom-0 w-full px-3 mb-4`}>
-                     <a
-                         href="#"
-                         className={`flex items-center px-4 py-3 my-1 rounded-lg transition-colors duration-200 text-gray-500 hover:bg-red-50 hover:text-red-600`}
-                     >
-                         <LogOutIcon className="w-5 h-5" />
-                         <span className={`ml-4 whitespace-nowrap transition-opacity ${!isOpen && 'md:opacity-0 md:hidden'}`}>Logout</span>
-                     </a>
-                 </div>
-            </div>
+            </aside>
         </>
     );
 };
 
+// Header Component: Displays user info, search, and notifications
 const Header = ({ teacher, setSidebarOpen }) => {
     const unreadCount = Array.isArray(mockData?.notifications)
         ? mockData.notifications.filter(n => !n.read).length
@@ -216,7 +270,7 @@ const Header = ({ teacher, setSidebarOpen }) => {
     return (
         <header className="sticky top-0 bg-white/80 backdrop-blur-sm z-20 border-b border-gray-200">
             <div className="flex items-center justify-between h-16 px-4 md:px-6">
-                 <button onClick={() => setSidebarOpen(true)} className="text-gray-500 md:hidden">
+                 <button onClick={() => setSidebarOpen(true)} className="text-gray-500 md:hidden" aria-label="Open Menu">
                      <MenuIcon />
                  </button>
                  <div className="relative hidden md:block">
@@ -224,7 +278,7 @@ const Header = ({ teacher, setSidebarOpen }) => {
                      <input type="text" placeholder="Search students, subjects..." className="bg-gray-100 rounded-lg pl-10 pr-4 py-2 w-64 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
                  </div>
                 <div className="flex items-center space-x-4">
-                    <button className="relative text-gray-500 hover:text-gray-800">
+                    <button className="relative text-gray-500 hover:text-gray-800" aria-label={`Notifications (${unreadCount} unread)`}>
                         <BellIcon />
                         {unreadCount > 0 && (
                             <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
@@ -238,7 +292,7 @@ const Header = ({ teacher, setSidebarOpen }) => {
                             <p className="font-semibold text-sm">{teacher.name}</p>
                             <p className="text-xs text-gray-500">{teacher.department}</p>
                         </div>
-                        <button className="text-gray-500">
+                        <button className="text-gray-500" aria-label="User Menu">
                             <ChevronDownIcon className="w-5 h-5" />
                         </button>
                     </div>
@@ -248,14 +302,20 @@ const Header = ({ teacher, setSidebarOpen }) => {
     );
 };
 
-// Section Components
+// Reusable Card component for consistent layout sections
 const Card = ({ children, className = '' }) => (
     <div className={`bg-white p-6 rounded-xl shadow-sm border border-gray-100 ${className}`}>
         {children}
     </div>
 );
 
+// Dashboard View: The main landing page after login
 const DashboardOverview = () => {
+    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const today = new Date();
+    const todayName = days[today.getDay()];
+    const todaysClasses = mockData.timetable[todayName] || [];
+
     return (
         <div className="space-y-6">
             <div className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white p-8 rounded-xl">
@@ -277,9 +337,9 @@ const DashboardOverview = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <Card className="lg:col-span-2">
-                    <h2 className="font-bold text-lg mb-4">Today's Timetable</h2>
+                    <h2 className="font-bold text-lg mb-4">Today's Timetable ({todayName})</h2>
                     <div className="space-y-4">
-                        {mockData.timetable["Monday"].length > 0 ? mockData.timetable["Monday"].map((item, index) => (
+                        {todaysClasses.length > 0 ? todaysClasses.map((item, index) => (
                              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                                  <div>
                                      <p className="font-semibold">{item.subject}</p>
@@ -291,7 +351,7 @@ const DashboardOverview = () => {
                                  </div>
                              </div>
                         )) : (
-                            <p className="text-center text-gray-500 py-4">No classes scheduled for today.</p>
+                             <p className="text-center text-gray-500 py-4">No classes scheduled for today.</p>
                         )}
                     </div>
                 </Card>
@@ -300,7 +360,7 @@ const DashboardOverview = () => {
                     <ul className="space-y-3">
                         {mockData.notifications.map((notif, index) => (
                             <li key={index} className="flex items-start space-x-3">
-                                <div className={`w-2 h-2 rounded-full mt-2 ${!notif.read ? 'bg-indigo-500' : 'bg-gray-300'}`}></div>
+                                <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${!notif.read ? 'bg-indigo-500' : 'bg-gray-300'}`}></div>
                                 <div>
                                     <p className="text-sm">{notif.message}</p>
                                     <p className="text-xs text-gray-400">{notif.time}</p>
@@ -314,6 +374,7 @@ const DashboardOverview = () => {
     );
 };
 
+// Academics Section: Contains tabs for Timetable, Attendance, etc.
 const AcademicManagement = () => {
     const [activeTab, setActiveTab] = useState('Attendance');
     const tabs = ['Timetable', 'Attendance', 'Assignments', 'Marks & Exams'];
@@ -352,9 +413,12 @@ const AcademicManagement = () => {
     );
 };
 
+// Timetable Viewer Component (within Academics)
 const TimetableViewer = () => {
     const [view, setView] = useState('daily');
     const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+    const todayName = new Date().toLocaleDateString('en-US', { weekday: 'long' });
+    
     return (
         <div>
             <div className="flex justify-between items-center mb-4">
@@ -366,19 +430,20 @@ const TimetableViewer = () => {
             </div>
             {view === 'daily' ? (
                 <div className="space-y-4">
-                    <h4 className="font-semibold text-md">Today (Monday)</h4>
-                    {mockData.timetable["Monday"].map((item, index) => (
+                    <h4 className="font-semibold text-md">Today ({todayName})</h4>
+                    {(mockData.timetable[todayName] || []).map((item, index) => (
                         <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                            <div>
                                <p className="font-semibold">{item.subject}</p>
                                <p className="text-sm text-gray-500">{item.time}</p>
                            </div>
                            <div className="flex items-center space-x-2">
-                                <span className="text-xs font-medium bg-blue-100 text-blue-800 px-2 py-1 rounded-full">{item.room}</span>
-                                <span className={`text-xs font-medium px-2 py-1 rounded-full ${item.type === 'Lecture' ? 'bg-green-100 text-green-800' : 'bg-purple-100 text-purple-800'}`}>{item.type}</span>
+                               <span className="text-xs font-medium bg-blue-100 text-blue-800 px-2 py-1 rounded-full">{item.room}</span>
+                               <span className={`text-xs font-medium px-2 py-1 rounded-full ${item.type === 'Lecture' ? 'bg-green-100 text-green-800' : 'bg-purple-100 text-purple-800'}`}>{item.type}</span>
                            </div>
                        </div>
                     ))}
+                    {(mockData.timetable[todayName] || []).length === 0 && <p className="text-center text-gray-500 py-4">No classes scheduled for today.</p>}
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
@@ -386,13 +451,13 @@ const TimetableViewer = () => {
                         <div key={day} className="bg-gray-50 p-4 rounded-lg">
                             <h4 className="font-bold text-center mb-3">{day}</h4>
                             <div className="space-y-3">
-                                {mockData.timetable[day]?.map((item, index) => (
+                                {mockData.timetable[day]?.length > 0 ? mockData.timetable[day].map((item, index) => (
                                     <div key={index} className="bg-white p-2 rounded-md shadow-sm text-xs">
                                         <p className="font-semibold">{item.subject}</p>
                                         <p className="text-gray-500">{item.time}</p>
                                         <p className="text-blue-600">{item.room}</p>
                                     </div>
-                                )) || <p className="text-center text-xs text-gray-400">No classes</p>}
+                                )) : <p className="text-center text-xs text-gray-400 pt-4">No classes</p>}
                             </div>
                         </div>
                     ))}
@@ -402,7 +467,9 @@ const TimetableViewer = () => {
     );
 };
 
+// Attendance Management Component (within Academics)
 const AttendanceManagement = () => {
+    // Initialize attendance state with all students marked as 'present'
     const [attendance, setAttendance] = useState(() => {
         const initialState = {};
         mockData.students.forEach(s => {
@@ -414,18 +481,20 @@ const AttendanceManagement = () => {
     const handleStatusChange = (studentId, status) => {
         setAttendance(prev => ({...prev, [studentId]: status}));
     };
+    
+    // Get today's date in YYYY-MM-DD format
+    const today = new Date().toISOString().split('T')[0];
 
     return (
         <div>
             <div className="flex flex-wrap gap-4 justify-between items-center mb-4">
                 <h3 className="font-bold text-lg">Mark Attendance</h3>
                 <div className="flex items-center flex-wrap gap-2">
-                    <input type="date" defaultValue="2024-07-29" className={`${inputFieldClasses} w-auto`}/>
+                    <input type="date" defaultValue={today} className={`${inputFieldClasses} w-auto`}/>
                     <select className={`${inputFieldClasses} w-auto`}>
                         <option>Select Class</option>
                         <option>CS-A</option>
                         <option>CS-B</option>
-                        <option>IT-A</option>
                     </select>
                     <select className={`${inputFieldClasses} w-auto`}>
                         <option>Select Subject</option>
@@ -441,9 +510,9 @@ const AttendanceManagement = () => {
                  </div>
                  <button className={btnPrimaryClasses}><DownloadIcon className="w-4 h-4 mr-2"/> Export Report</button>
              </div>
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto max-h-[60vh] relative">
                 <table className="w-full text-sm text-left">
-                    <thead className="bg-gray-50 text-gray-500 uppercase text-xs">
+                    <thead className="bg-gray-50 text-gray-500 uppercase text-xs sticky top-0">
                         <tr>
                             <th className="p-3">Student ID</th>
                             <th className="p-3">Student Name</th>
@@ -451,7 +520,7 @@ const AttendanceManagement = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {mockData.students.slice(0, 120).map(student => (
+                        {mockData.students.map(student => (
                             <tr key={student.id} className="border-b">
                                 <td className="p-3 font-mono">{student.id}</td>
                                 <td className="p-3 flex items-center gap-3">
@@ -460,9 +529,9 @@ const AttendanceManagement = () => {
                                 </td>
                                 <td className="p-3 text-center">
                                     <div className="inline-flex rounded-lg shadow-sm">
-                                        <button onClick={() => handleStatusChange(student.id, 'present')} className={`px-3 py-1 text-xs rounded-l-lg ${attendance[student.id] === 'present' ? 'bg-green-500 text-white' : 'bg-white hover:bg-gray-50'}`}>Present</button>
-                                        <button onClick={() => handleStatusChange(student.id, 'absent')} className={`px-3 py-1 text-xs ${attendance[student.id] === 'absent' ? 'bg-red-500 text-white' : 'bg-white hover:bg-gray-50'}`}>Absent</button>
-                                        <button onClick={() => handleStatusChange(student.id, 'leave')} className={`px-3 py-1 text-xs rounded-r-lg ${attendance[student.id] === 'leave' ? 'bg-yellow-500 text-white' : 'bg-white hover:bg-gray-50'}`}>Leave</button>
+                                        <button onClick={() => handleStatusChange(student.id, 'present')} className={`px-3 py-1 text-xs rounded-l-lg transition-colors ${attendance[student.id] === 'present' ? 'bg-green-500 text-white' : 'bg-white hover:bg-gray-50'}`}>Present</button>
+                                        <button onClick={() => handleStatusChange(student.id, 'absent')} className={`px-3 py-1 text-xs transition-colors ${attendance[student.id] === 'absent' ? 'bg-red-500 text-white' : 'bg-white hover:bg-gray-50'}`}>Absent</button>
+                                        <button onClick={() => handleStatusChange(student.id, 'leave')} className={`px-3 py-1 text-xs rounded-r-lg transition-colors ${attendance[student.id] === 'leave' ? 'bg-yellow-500 text-white' : 'bg-white hover:bg-gray-50'}`}>Leave</button>
                                     </div>
                                 </td>
                             </tr>
@@ -477,9 +546,10 @@ const AttendanceManagement = () => {
     );
 };
 
+// Modal for Grading student assignments
 const GradingModal = ({ assignment, student, onClose }) => (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center p-4">
-        <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl transform transition-all">
+        <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl transform transition-all animate-fade-in-up">
             <div className="p-6 border-b flex justify-between items-center">
                 <h3 className="font-bold text-lg">Grade Submission</h3>
                 <button onClick={onClose} className="text-gray-400 hover:text-gray-600"><XIcon /></button>
@@ -521,12 +591,12 @@ const GradingModal = ({ assignment, student, onClose }) => (
 );
 
 
+// Assignment Management Component (within Academics)
 const AssignmentManagement = () => {
     const [gradingInfo, setGradingInfo] = useState(null);
 
     const handleGradeClick = (assignment) => {
-        // In a real app, you'd probably select a specific student to grade.
-        // Here, we'll just pick a mock student.
+        // In a real app, you'd select a specific student. Here we mock it.
         setGradingInfo({ assignment, student: mockData.students[0] });
     };
     
@@ -564,6 +634,7 @@ const AssignmentManagement = () => {
     );
 };
 
+// Marks & Exam Uploads Component (within Academics)
 const MarksAndExamUploads = () => (
     <div>
         <div className="flex justify-between items-center mb-4">
@@ -573,9 +644,9 @@ const MarksAndExamUploads = () => (
                 <button className={btnPrimaryClasses}><LockIcon className="w-4 h-4 mr-2"/> Lock Marks</button>
             </div>
         </div>
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto max-h-[60vh] relative">
             <table className="w-full text-sm text-left">
-                <thead className="bg-gray-50 text-gray-500 uppercase text-xs">
+                <thead className="bg-gray-50 text-gray-500 uppercase text-xs sticky top-0">
                     <tr>
                         <th className="p-3">Student ID</th>
                         <th className="p-3">Student Name</th>
@@ -584,7 +655,7 @@ const MarksAndExamUploads = () => (
                     </tr>
                 </thead>
                 <tbody>
-                    {mockData.students.slice(0, 120).map(student => (
+                    {mockData.students.map(student => (
                         <tr key={student.id} className="border-b">
                             <td className="p-3 font-mono">{student.id}</td>
                             <td className="p-3">{student.name}</td>
@@ -600,6 +671,7 @@ const MarksAndExamUploads = () => (
     </div>
 );
 
+// Communication Tools View: Messaging and Announcements
 const CommunicationTools = () => {
     return (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[75vh]">
@@ -643,13 +715,14 @@ const CommunicationTools = () => {
     );
 };
 
+// Student Performance View: Charts and lists for insights
 const StudentPerformanceInsights = () => {
     const [filter, setFilter] = useState('all');
     
     const filteredStudents = () => {
         switch(filter) {
             case 'low_attendance': return mockData.students.filter(s => s.attendance < 75);
-            case 'low_marks': return mockData.students.filter(s => s.marks < 40);
+            case 'low_marks': return mockData.students.filter(s => s.marks < 50); // Adjusted for better filtering
             default: return mockData.students;
         }
     }
@@ -658,62 +731,58 @@ const StudentPerformanceInsights = () => {
         <div className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
                <Card className="lg:col-span-3">
-  <h3 className="font-bold text-lg mb-4">Subject-wise Marks Distribution (Average of 120 Students)</h3>
-  <div className="flex items-end h-64 space-x-4 p-4 border rounded-lg bg-gray-50">
-    {['DSA', 'Algo', 'OS', 'DBMS', 'CN'].map((subject) => {
-      // Simulate average marks between 60 to 95
-      const averageMark = Math.floor(Math.random() * 35 + 60); // 60 to 95
-      const barHeight = `${(averageMark / 100) * 100}%`; // height proportional to 100 marks
-
-      return (
-        <div key={subject} className="flex-1 flex flex-col items-center justify-end">
-          <div
-            className="w-full bg-indigo-500 rounded-t-lg hover:bg-indigo-600 transition-colors text-white flex items-center justify-center text-xs font-bold"
-            style={{ height: barHeight }}
-          >
-            {averageMark}
-          </div>
-          <p className="text-xs mt-2">{subject}</p>
-        </div>
-      );
-    })}
-  </div>
-</Card>
-
-                <Card className="lg:col-span-2">
-    <h3 className="font-bold text-lg mb-4">At-Risk Students</h3>
-    <p className="text-sm text-gray-500 mb-4">Low attendance or marks.</p>
-
-    {/* Wrapper with fixed height and scroll */}
-    <div className="max-h-64 overflow-y-auto pr-2">
-        <ul className="space-y-2">
-            {mockData.students
-                .filter(s => s.attendance < 80 || s.marks < 50)
-                .map(s => (
-                    <li
-                        key={s.id}
-                        className="flex items-center justify-between p-3 bg-red-50 border border-red-200 rounded-lg"
-                    >
-                        <div className="flex items-center gap-3">
-                            <img
-                                src={s.avatar}
-                                alt={s.name}
-                                className="w-8 h-8 rounded-full"
-                            />
-                            <div>
-                                <p className="font-semibold">{s.name}</p>
-                                <p className="text-xs text-red-700">
-                                    Att: {s.attendance}% / Marks: {s.marks}
-                                </p>
-                            </div>
-                        </div>
-                        <button className={btnSecondarySmClasses}>Alert</button>
-                    </li>
-                ))}
-        </ul>
-    </div>
-</Card>
-
+                 <h3 className="font-bold text-lg mb-4">Subject-wise Marks Distribution (Average)</h3>
+                 <div className="flex items-end h-64 space-x-4 p-4 border rounded-lg bg-gray-50">
+                   {['DSA', 'Algo', 'OS', 'DBMS', 'CN'].map((subject) => {
+                     const averageMark = Math.floor(Math.random() * 35 + 60); // Simulate average marks 60-95
+                     const barHeight = `${(averageMark / 100) * 100}%`;
+               
+                     return (
+                       <div key={subject} className="flex-1 flex flex-col items-center justify-end">
+                         <div
+                           className="w-full bg-indigo-500 rounded-t-lg hover:bg-indigo-600 transition-colors text-white flex items-center justify-center text-xs font-bold"
+                           style={{ height: barHeight }}
+                         >
+                           {averageMark}
+                         </div>
+                         <p className="text-xs mt-2">{subject}</p>
+                       </div>
+                     );
+                   })}
+                 </div>
+               </Card>
+               <Card className="lg:col-span-2">
+                 <h3 className="font-bold text-lg mb-4">At-Risk Students</h3>
+                 <p className="text-sm text-gray-500 mb-4">Low attendance or marks.</p>
+                 <div className="max-h-64 overflow-y-auto pr-2">
+                     <ul className="space-y-2">
+                         {mockData.students
+                             .filter(s => s.attendance < 80 || s.marks < 50)
+                             .slice(0, 5) // Show top 5 for brevity
+                             .map(s => (
+                                 <li
+                                     key={s.id}
+                                     className="flex items-center justify-between p-3 bg-red-50 border border-red-200 rounded-lg"
+                                 >
+                                     <div className="flex items-center gap-3">
+                                         <img
+                                             src={s.avatar}
+                                             alt={s.name}
+                                             className="w-8 h-8 rounded-full"
+                                         />
+                                         <div>
+                                             <p className="font-semibold">{s.name}</p>
+                                             <p className="text-xs text-red-700">
+                                                 Att: {s.attendance}% / Marks: {s.marks}
+                                             </p>
+                                         </div>
+                                     </div>
+                                     <button className={btnSecondarySmClasses}>Alert</button>
+                                 </li>
+                             ))}
+                     </ul>
+                 </div>
+               </Card>
             </div>
             <Card>
                 <div className="flex justify-between items-center mb-4">
@@ -723,14 +792,14 @@ const StudentPerformanceInsights = () => {
                         <select onChange={(e) => setFilter(e.target.value)} className={inputFieldClasses}>
                             <option value="all">All Students</option>
                             <option value="low_attendance">Below 75% Attendance</option>
-                            <option value="low_marks">Below 40% Marks</option>
+                            <option value="low_marks">Below 50% Marks</option>
                         </select>
                         <button className={btnSecondaryClasses}><DownloadIcon className="w-4 h-4 mr-2"/> Export</button>
                     </div>
                 </div>
-                 <div className="overflow-x-auto">
+                 <div className="overflow-auto max-h-[60vh] relative">
                      <table className="w-full text-sm text-left">
-                         <thead className="bg-gray-50 text-gray-500 uppercase text-xs">
+                         <thead className="bg-gray-50 text-gray-500 uppercase text-xs sticky top-0">
                              <tr>
                                  <th className="p-3">Student Name</th>
                                  <th className="p-3">Attendance</th>
@@ -746,8 +815,8 @@ const StudentPerformanceInsights = () => {
                                          {student.name}
                                      </td>
                                      <td className={`p-3 font-semibold ${student.attendance < 75 ? 'text-red-500' : 'text-green-600'}`}>{student.attendance}%</td>
-                                     <td className={`p-3 font-semibold ${student.marks < 40 ? 'text-red-500' : 'text-gray-800'}`}>{student.marks}/100</td>
-                                     <td className="p-3 text-green-500">▲ Improving</td>
+                                     <td className={`p-3 font-semibold ${student.marks < 50 ? 'text-red-500' : 'text-gray-800'}`}>{student.marks}/100</td>
+                                     <td className={`p-3 ${Math.random() > 0.5 ? 'text-green-500' : 'text-red-500'}`}>{Math.random() > 0.5 ? '▲ Improving' : '▼ Declining'}</td>
                                  </tr>
                              ))}
                          </tbody>
@@ -758,6 +827,121 @@ const StudentPerformanceInsights = () => {
     );
 };
 
+// NEW: Competitive Exam Overview Component
+const CompetitiveExamOverview = () => {
+    const [filters, setFilters] = useState({ year: 'all', exam: 'all', class: 'all' });
+
+    const handleFilterChange = (e) => {
+        const { name, value } = e.target;
+        setFilters(prev => ({ ...prev, [name]: value }));
+    };
+
+    const filteredExams = mockData.competitiveExams.filter(exam => {
+        const yearMatch = filters.year === 'all' || exam.year.toString() === filters.year;
+        const examMatch = filters.exam === 'all' || exam.name === filters.exam;
+        const classMatch = filters.class === 'all' || exam.class === filters.class;
+        return yearMatch && examMatch && classMatch;
+    });
+
+    const getPerformanceColor = (percentage) => {
+        if (percentage < 40) return 'text-red-500';
+        if (percentage < 70) return 'text-yellow-500';
+        return 'text-green-500';
+    };
+
+    return (
+        <div className="space-y-6">
+            <Card>
+                <div className="flex flex-wrap gap-4 justify-between items-center border-b pb-4 mb-4">
+                    <h2 className="text-xl font-bold">Competitive Exam Overview</h2>
+                    <div className="flex items-center gap-2 flex-wrap">
+                        <select name="year" onChange={handleFilterChange} className={`${inputFieldClasses} w-auto`}>
+                            <option value="all">All Years</option>
+                            <option value="2025">2025</option>
+                            <option value="2024">2024</option>
+                        </select>
+                        <select name="exam" onChange={handleFilterChange} className={`${inputFieldClasses} w-auto`}>
+                            <option value="all">All Exams</option>
+                            <option value="JEE Mains">JEE Mains</option>
+                            <option value="JEE Advanced">JEE Advanced</option>
+                            <option value="NEET">NEET</option>
+                            <option value="CET">CET</option>
+                        </select>
+                         <select name="class" onChange={handleFilterChange} className={`${inputFieldClasses} w-auto`}>
+                            <option value="all">All Classes</option>
+                            <option value="CS-A">CS-A</option>
+                            <option value="CS-B">CS-B</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {filteredExams.map(exam => {
+                        const passPercentage = Math.round((exam.totalQualified / exam.totalAppeared) * 100);
+                        const isLowPerformance = passPercentage < 40;
+
+                        return (
+                            <Card key={exam.id} className={`border-l-4 ${isLowPerformance ? 'border-red-500' : 'border-indigo-500'}`}>
+                                {isLowPerformance && (
+                                    <div className="flex items-center gap-2 text-red-600 bg-red-50 p-2 rounded-lg mb-4 text-sm">
+                                        <AlertTriangleIcon className="w-5 h-5" />
+                                        <span>Pass percentage is below 40%</span>
+                                    </div>
+                                )}
+                                <div className="flex justify-between items-start">
+                                    <h3 className="font-bold text-lg">{exam.name} - {exam.year}</h3>
+                                    <span className={`font-bold text-2xl ${getPerformanceColor(passPercentage)}`}>
+                                        {passPercentage}%
+                                    </span>
+                                </div>
+                                <p className="text-sm text-gray-500 mb-4">Pass Rate</p>
+
+                                <div>
+                                    <div className="flex justify-between text-sm mb-1">
+                                        <span>Appeared: {exam.totalAppeared}</span>
+                                        <span>Qualified: {exam.totalQualified}</span>
+                                    </div>
+                                    <div className="w-full bg-gray-200 rounded-full h-2.5">
+                                        <div className="bg-indigo-600 h-2.5 rounded-full" style={{ width: `${passPercentage}%` }}></div>
+                                    </div>
+                                </div>
+                                
+                                <div className="mt-4 pt-4 border-t">
+                                    <h4 className="font-semibold text-sm mb-2">Subject-wise Average Score</h4>
+                                    <ul className="space-y-1 text-sm text-gray-600">
+                                        {exam.subjects.map(subject => (
+                                            <li key={subject.name} className="flex justify-between">
+                                                <span>{subject.name}</span>
+                                                <span className="font-medium">{subject.avgScore} / 100</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+
+                                {exam.lowPerformingClasses.length > 0 && (
+                                     <div className="mt-4 pt-4 border-t">
+                                         <h4 className="font-semibold text-sm mb-2 text-red-700">Low Performing Classes</h4>
+                                         <div className="flex flex-wrap gap-2">
+                                             {exam.lowPerformingClasses.map(className => (
+                                                 <span key={className} className="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-1 rounded-full">{className}</span>
+                                             ))}
+                                         </div>
+                                     </div>
+                                )}
+                            </Card>
+                        )
+                    })}
+                     {filteredExams.length === 0 && (
+                        <p className="text-center text-gray-500 py-8 col-span-full">No exam data matches the selected filters.</p>
+                    )}
+                </div>
+            </Card>
+        </div>
+    );
+};
+
+
+// Profile and Teaching Info View
 const ProfileAndTeachingInfo = () => (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card className="lg:col-span-2">
@@ -796,8 +980,8 @@ const ProfileAndTeachingInfo = () => (
             <Card>
                 <h3 className="font-bold text-lg mb-4">Teaching Materials</h3>
                 <div className="space-y-2">
-                    <div className="flex justify-between items-center text-sm p-2 bg-gray-50 rounded"><span>DS_Module1.pdf</span> <DownloadIcon className="w-4 h-4 text-gray-500"/></div>
-                    <div className="flex justify-between items-center text-sm p-2 bg-gray-50 rounded"><span>Algo_Intro.pptx</span> <DownloadIcon className="w-4 h-4 text-gray-500"/></div>
+                    <div className="flex justify-between items-center text-sm p-2 bg-gray-50 rounded"><span>DS_Module1.pdf</span> <button><DownloadIcon className="w-4 h-4 text-gray-500"/></button></div>
+                    <div className="flex justify-between items-center text-sm p-2 bg-gray-50 rounded"><span>Algo_Intro.pptx</span> <button><DownloadIcon className="w-4 h-4 text-gray-500"/></button></div>
                 </div>
                  <button className={`${btnSecondaryClasses} w-full mt-4`}>Upload New Material</button>
             </Card>
@@ -805,6 +989,7 @@ const ProfileAndTeachingInfo = () => (
     </div>
 );
 
+// Security and Access Control View
 const SecurityAndAccess = () => (
     <Card>
         <h3 className="font-bold text-lg mb-4">Security & Access Control</h3>

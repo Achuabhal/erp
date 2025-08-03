@@ -8,6 +8,7 @@ import FeeManagementDashboard from "./pages/F";
 import Admission from "./pages/admission";
 import SUPER from "./pages/superadmin"
 import ADMIN from "./pages/admin";
+import APPLY from "./pages/apply";
 // Import your pages
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
         <Route path="/admission" element={<Admission/>} />
         <Route path="/super" element={<SUPER/>} />
         <Route path="/admin" element={<ADMIN/>} />
+        <Route path="/apply" element={<APPLY/>} />
         {/* Add more routes as needed */}
 
       </Routes>

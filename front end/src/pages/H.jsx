@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
-import { School } from 'lucide-react';
+
 // --- MOCK DATA --- //
 const facultyData = [
     { id: 1, name: 'Dr. Evelyn Reed', photo: 'https://placehold.co/100x100/E2E8F0/4A5568?text=ER', subject: 'Quantum Physics', workload: 18, status: 'Active' },
@@ -76,6 +76,17 @@ const marksApprovals = [
     { id: 2, faculty: 'Dr. Ben Carter', subject: 'MECH201 Mid-term Exam', status: 'Pending' },
 ];
 
+// --- NEW MOCK DATA FOR COMPETITIVE EXAMS --- //
+const competitiveExamData = [
+    { id: 1, year: 2024, examName: 'JEE', totalAppeared: 150, totalQualified: 75, department: 'Science', subjectWisePerformance: [{ subject: 'Physics', averageScore: 65 }, { subject: 'Chemistry', averageScore: 72 }, { subject: 'Math', averageScore: 68 }] },
+    { id: 2, year: 2024, examName: 'NEET', totalAppeared: 120, totalQualified: 90, department: 'Biology', subjectWisePerformance: [{ subject: 'Physics', averageScore: 70 }, { subject: 'Chemistry', averageScore: 75 }, { subject: 'Biology', averageScore: 80 }] },
+    { id: 3, year: 2024, examName: 'CET', totalAppeared: 200, totalQualified: 70, department: 'Engineering', subjectWisePerformance: [{ subject: 'Physics', averageScore: 55 }, { subject: 'Chemistry', averageScore: 60 }, { subject: 'Math', averageScore: 58 }] },
+    { id: 4, year: 2023, examName: 'JEE', totalAppeared: 140, totalQualified: 60, department: 'Science', subjectWisePerformance: [{ subject: 'Physics', averageScore: 62 }, { subject: 'Chemistry', averageScore: 68 }, { subject: 'Math', averageScore: 65 }] },
+    { id: 5, year: 2023, examName: 'NEET', totalAppeared: 110, totalQualified: 85, department: 'Biology', subjectWisePerformance: [{ subject: 'Physics', averageScore: 68 }, { subject: 'Chemistry', averageScore: 72 }, { subject: 'Biology', averageScore: 78 }] },
+    { id: 6, year: 2023, examName: 'CET', totalAppeared: 180, totalQualified: 80, department: 'Engineering', subjectWisePerformance: [{ subject: 'Physics', averageScore: 60 }, { subject: 'Chemistry', averageScore: 65 }, { subject: 'Math', averageScore: 62 }] },
+];
+
+
 // --- SVG ICONS --- //
 const icons = {
     dashboard: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>,
@@ -85,6 +96,7 @@ const icons = {
     comms: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>,
     ai: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 8V4H8"></path><rect x="4" y="12" width="8" height="8" rx="2"></rect><path d="M12 12v8h4"></path><path d="M20 12v-4h-4"></path><path d="M16 4h4v4"></path><path d="M18 18h2v2h-2z"></path><path d="M6 6h2v2H6z"></path></svg>,
     access: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>,
+    exams: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path></svg>,
     menu: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>,
     bell: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>,
     user: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>,
@@ -93,6 +105,7 @@ const icons = {
     x: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>,
     upload: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>,
     loader: <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>,
+    alert: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-siren"><path d="M5.58 3.37c.32-.2.68-.3.92-.57.24-.27.34-.62.34-1s-.1-.73-.34-1c-.24-.27-.6-.37-.92-.57-.32-.2-.53-.53-.53-.83s.21-.63.53-.83c.32-.2.68-.3.92-.57.24-.27.34-.62.34-1s-.1-.73-.34-1c-.24-.27-.6-.37-.92-.57A4.98 4.98 0 0 0 2 6c0 1.54.64 2.94 1.69 3.91L2 12h20l-1.69-2.09A5.02 5.02 0 0 0 22 6c0-1.54-.64-2.94-1.69-3.91-.32.2-.68.3-.92.57-.24.27-.34.62-.34 1s.1.73.34 1c.24.27.6.37.92.57.32.2.53.53.53.83s-.21.63-.53.83c-.32.2-.68.3-.92-.57-.24.27-.34.62-.34 1s.1.73.34 1c.24.27.6.37.92.57Z"/><path d="M12 12v10"/><path d="M12 22h-2"/><path d="M12 22h2"/></svg>
 };
 
 
@@ -574,7 +587,7 @@ const AITools = () => {
             const chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
             const payload = { contents: chatHistory };
             const apiKey = ""; 
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
             const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -611,7 +624,7 @@ Current Data: ${JSON.stringify(facultyData.map(f => ({id: f.id, name: f.name, wo
                 }
             };
             const apiKey = "";
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
             const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -724,7 +737,7 @@ Keywords: "${announcementKeywords}"`;
             const chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
             const payload = { contents: chatHistory };
             const apiKey = "";
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
             const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -878,17 +891,167 @@ const AccessRights = () => {
     );
 };
 
+// --- NEW COMPONENT FOR COMPETITIVE EXAM OVERVIEW --- //
+const CompetitiveExamOverview = () => {
+    const [selectedYear, setSelectedYear] = useState('2024');
+    const [selectedExam, setSelectedExam] = useState('All');
+
+    const filteredData = competitiveExamData.filter(item => {
+        const yearMatch = selectedYear === 'All' || item.year.toString() === selectedYear;
+        const examMatch = selectedExam === 'All' || item.examName === selectedExam;
+        return yearMatch && examMatch;
+    });
+
+    const lowPerformers = filteredData.filter(item => (item.totalQualified / item.totalAppeared) * 100 < 40);
+
+    const getStatusColor = (percentage) => {
+        if (percentage >= 70) return 'bg-green-100 text-green-800';
+        if (percentage >= 40) return 'bg-yellow-100 text-yellow-800';
+        return 'bg-red-100 text-red-800';
+    };
+    
+    const overallStats = filteredData.reduce((acc, curr) => {
+        acc.totalAppeared += curr.totalAppeared;
+        acc.totalQualified += curr.totalQualified;
+        return acc;
+    }, { totalAppeared: 0, totalQualified: 0 });
+
+    const overallPassPercentage = overallStats.totalAppeared > 0 ? ((overallStats.totalQualified / overallStats.totalAppeared) * 100).toFixed(2) : 0;
+
+    const subjectData = selectedExam !== 'All' 
+        ? filteredData.find(d => d.examName === selectedExam)?.subjectWisePerformance || [] 
+        : [];
+
+    return (
+        <div className="space-y-6">
+            <Card title="Competitive Exam Overview">
+                <div className="flex flex-col md:flex-row gap-4 mb-6">
+                    {/* Filters */}
+                    <div>
+                        <label htmlFor="year-filter" className="block mb-2 text-sm font-medium text-gray-700">Year</label>
+                        <select id="year-filter" value={selectedYear} onChange={e => setSelectedYear(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5">
+                            <option value="2024">2024</option>
+                            <option value="2023">2023</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label htmlFor="exam-filter" className="block mb-2 text-sm font-medium text-gray-700">Exam Type</label>
+                        <select id="exam-filter" value={selectedExam} onChange={e => setSelectedExam(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5">
+                            <option value="All">All Exams</option>
+                            <option value="JEE">JEE</option>
+                            <option value="NEET">NEET</option>
+                            <option value="CET">CET</option>
+                        </select>
+                    </div>
+                </div>
+
+                {/* KPI Cards */}
+                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+                    <div className="bg-blue-50 p-4 rounded-xl flex items-center space-x-4">
+                        <div className="bg-blue-100 p-3 rounded-full">{icons.user}</div>
+                        <div>
+                            <p className="text-sm text-gray-500">Total Appeared</p>
+                            <p className="text-2xl font-bold text-gray-800">{overallStats.totalAppeared}</p>
+                        </div>
+                    </div>
+                    <div className="bg-green-50 p-4 rounded-xl flex items-center space-x-4">
+                        <div className="bg-green-100 p-3 rounded-full">{icons.check}</div>
+                        <div>
+                            <p className="text-sm text-gray-500">Total Qualified</p>
+                            <p className="text-2xl font-bold text-gray-800">{overallStats.totalQualified}</p>
+                        </div>
+                    </div>
+                    <div className="bg-indigo-50 p-4 rounded-xl flex items-center space-x-4">
+                        <div className="bg-indigo-100 p-3 rounded-full">%</div>
+                        <div>
+                            <p className="text-sm text-gray-500">Overall Pass %</p>
+                            <p className="text-2xl font-bold text-gray-800">{overallPassPercentage}%</p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Low Performance Alert */}
+                {lowPerformers.length > 0 && (
+                    <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-r-lg mb-6" role="alert">
+                        <div className="flex">
+                            <div className="py-1">{icons.alert}</div>
+                            <div>
+                                <p className="font-bold">Low Performance Alert</p>
+                                <p className="text-sm">
+                                    The following exams have a pass rate below 40%: {lowPerformers.map(p => `${p.examName} (${p.year})`).join(', ')}.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Performance Table */}
+                <div className="overflow-x-auto">
+                    <table className="w-full text-sm text-left text-gray-500">
+                        <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+                            <tr>
+                                <th className="px-4 py-3">Exam Name</th>
+                                <th className="px-4 py-3">Department</th>
+                                <th className="px-4 py-3 text-center">Appeared</th>
+                                <th className="px-4 py-3 text-center">Qualified</th>
+                                <th className="px-4 py-3 text-center">Pass %</th>
+                                <th className="px-4 py-3 text-center">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {filteredData.map(item => {
+                                const passPercentage = (item.totalQualified / item.totalAppeared) * 100;
+                                return (
+                                    <tr key={item.id} className="bg-white border-b hover:bg-gray-50">
+                                        <td className="px-4 py-3 font-medium text-gray-900">{item.examName}</td>
+                                        <td className="px-4 py-3">{item.department}</td>
+                                        <td className="px-4 py-3 text-center">{item.totalAppeared}</td>
+                                        <td className="px-4 py-3 text-center">{item.totalQualified}</td>
+                                        <td className="px-4 py-3 text-center font-semibold">{passPercentage.toFixed(2)}%</td>
+                                        <td className="px-4 py-3 text-center">
+                                            <span className={`px-3 py-1 text-xs font-bold rounded-full ${getStatusColor(passPercentage)}`}>
+                                                {passPercentage >= 70 ? 'Good' : passPercentage >= 40 ? 'Average' : 'Poor'}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                )
+                            })}
+                        </tbody>
+                    </table>
+                </div>
+            </Card>
+
+            {selectedExam !== 'All' && subjectData.length > 0 && (
+                 <Card title={`Subject-wise Performance for ${selectedExam} (${selectedYear})`}>
+                    <div style={{ width: '100%', height: 300 }}>
+                        <ResponsiveContainer>
+                            <BarChart data={subjectData} layout="vertical" margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis type="number" domain={[0, 100]} />
+                                <YAxis dataKey="subject" type="category" width={80} />
+                                <Tooltip />
+                                <Legend />
+                                <Bar dataKey="averageScore" name="Average Score" fill="#8884d8" />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+                </Card>
+            )}
+        </div>
+    );
+};
+
 
 // --- MAIN APP COMPONENT --- //
 export default function App() {
     const [activeView, setActiveView] = useState('Dashboard');
     const [isSidebarOpen, setSidebarOpen] = useState(true);
-    const [dynamicStyle, setDynamicStyle] = useState({});
 
     const navItems = [
         { name: 'Dashboard', icon: icons.dashboard, component: <DepartmentControlPanel /> },
         { name: 'Timetable', icon: icons.timetable, component: <TimetableAndPlanning /> },
         { name: 'Analytics', icon: icons.analytics, component: <DepartmentAnalytics /> },
+        { name: 'Exams', icon: icons.exams, component: <CompetitiveExamOverview /> },
         { name: 'Documents', icon: icons.docs, component: <DocumentsAndCompliance /> },
         { name: 'Communication', icon: icons.comms, component: <CommunicationTools /> },
         { name: 'AI Tools', icon: icons.ai, component: <AITools /> },
@@ -900,69 +1063,46 @@ export default function App() {
         return activeItem ? activeItem.component : <DepartmentControlPanel />;
     };
     
-    // This useEffect hook applies CSS scaling to create a "zoomed-out" desktop view on smaller screens.
+    // Adjust sidebar state based on screen size
     useEffect(() => {
-        const DESKTOP_WIDTH = 1440; // The target width the layout is designed for.
-
-        const updateScale = () => {
-            const screenWidth = window.innerWidth;
-            
-            if (screenWidth < DESKTOP_WIDTH) {
-                const scale = screenWidth / DESKTOP_WIDTH;
-                setDynamicStyle({
-                    minWidth: `${DESKTOP_WIDTH}px`,
-                    transform: `scale(${scale})`,
-                    transformOrigin: 'top left',
-                    height: `calc(100vh / ${scale})`, // Adjust height to prevent excessive empty space
-                    overflow: 'hidden', // Hide the overflow caused by scaling
-                });
+        const handleResize = () => {
+            if (window.innerWidth < 768) {
+                setSidebarOpen(false);
             } else {
-                // On larger screens, use default styles.
-                setDynamicStyle({
-                    minWidth: `${DESKTOP_WIDTH}px`,
-                    height: '100vh',
-                });
+                setSidebarOpen(true);
             }
         };
-
-        // Run on initial load
-        updateScale();
-
-        // Add event listener for window resizing
-        window.addEventListener('resize', updateScale);
-
-        // Cleanup function to remove the event listener
-        return () => window.removeEventListener('resize', updateScale);
-    }, []); // Empty dependency array ensures this effect runs only on mount and unmount.
+        window.addEventListener('resize', handleResize);
+        handleResize(); // Call on initial render
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
 
     return (
-        <div className="bg-gray-100 flex" style={dynamicStyle}>
+        <div className="bg-gray-100 flex h-screen">
             {/* Sidebar */}
             <aside className={`bg-white text-gray-800 flex flex-col h-full shadow-lg relative transition-all duration-300 ease-in-out ${isSidebarOpen ? 'w-64' : 'w-20'}`}>
-                <div className={`flex items-center h-20 border-b border-gray-200 ${isSidebarOpen ? 'justify-start px-6' : 'justify-center'}`}>
+                <div className={`flex items-center h-20 border-b border-gray-200 ${isSidebarOpen ? 'justify-start px-4' : 'justify-center'}`}>
                     {isSidebarOpen ? (
-  <div className="flex items-center gap-2 pl-4 pt-4">
-    <img
-      src="/images/logo.jpeg"
-      alt="Logo"
-      className="w-12 h-12 object-contain"
-    />
-    <h1 className="!text-2xl font-semibold text-gray-900 leading-tight mt-[-2px]">
-      HOD <br /> ERP
-    </h1>
-  </div>
-) : (
-  <div className="flex justify-center pt-4">
-    <img
-      src="/images/logo.jpeg"
-      alt="Logo"
-      className="w-12 h-12 object-contain"
-    />
-  </div>
-)}
-
-
+                        <div className="flex items-center gap-2">
+                           <img
+                                src="https://placehold.co/48x48/6366F1/FFFFFF?text=ERP&font=sans"
+                                alt="Logo"
+                                className="w-12 h-12 rounded-lg"
+                            />
+                            <h1 className="text-xl font-bold text-gray-900 leading-tight">
+                                HOD <br /> Dashboard
+                            </h1>
+                        </div>
+                    ) : (
+                        <div className="flex justify-center">
+                           <img
+                                src="https://placehold.co/48x48/6366F1/FFFFFF?text=ERP&font=sans"
+                                alt="Logo"
+                                className="w-12 h-12 rounded-lg"
+                            />
+                        </div>
+                    )}
                 </div>
                 <nav className="flex-1 mt-6 overflow-y-auto">
                     <ul>
