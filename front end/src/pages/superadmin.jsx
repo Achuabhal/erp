@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Shield, Users, UserCheck, Bell, BarChart2, BookOpen, UserCog, LogOut, ChevronDown, Search, AlertTriangle, X } from 'lucide-react';
+import { Shield, Users, UserCheck, Bell, BarChart2, BookOpen, UserCog, LogOut, Search, AlertTriangle, X, ChevronsLeft, ChevronsRight } from 'lucide-react';
 
 // Mock Data
 const mockData = {
@@ -73,7 +73,8 @@ const getClassById = (id) => mockData.classes.find(c => c.id === id);
 // Main App Component
 export default function App() {
   const [activeView, setActiveView] = useState('Dashboard');
-  const [userRole, setUserRole] = useState('Super Admin');
+  const [userRole] = useState('Super Admin'); // Role is now fixed
+  const [isSidebarMinimized, setIsSidebarMinimized] = useState(false);
 
   const totalStaff = mockData.teachers.length + mockData.nonTeachingStaff;
 
@@ -96,9 +97,15 @@ export default function App() {
 
   return (
     <div className="flex h-screen bg-gray-100 font-sans">
-      <Sidebar setActiveView={setActiveView} activeView={activeView} userRole={userRole} />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <Header userRole={userRole} setUserRole={setUserRole} />
+      <Sidebar 
+        setActiveView={setActiveView} 
+        activeView={activeView} 
+        userRole={userRole} 
+        isMinimized={isSidebarMinimized}
+        setIsMinimized={setIsSidebarMinimized}
+      />
+      <div className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ease-in-out ${isSidebarMinimized ? 'ml-20' : 'ml-64'}`}>
+        <Header userRole={userRole} />
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-4 md:p-6 lg:p-8">
           {renderView()}
         </main>
@@ -108,7 +115,7 @@ export default function App() {
 }
 
 // Sidebar Component
-const Sidebar = ({ setActiveView, activeView, userRole }) => {
+const Sidebar = ({ setActiveView, activeView, userRole, isMinimized, setIsMinimized }) => {
   const navItems = [
     { name: 'Dashboard', icon: Shield, roles: ['Super Admin', 'Admin', 'Principal', 'HOD'] },
     { name: 'Class Teachers', icon: UserCheck, roles: ['Super Admin', 'Admin', 'Principal'] },
@@ -118,13 +125,13 @@ const Sidebar = ({ setActiveView, activeView, userRole }) => {
   ];
 
   return (
-    <aside className="w-64 bg-white text-gray-800 flex flex-col shadow-lg">
-      <div className="p-6 text-2xl font-bold text-indigo-600 border-b">
-        PUC Portal
+    <aside className={`fixed top-0 left-0 h-full bg-white text-gray-800 flex flex-col shadow-lg transition-all duration-300 ease-in-out ${isMinimized ? 'w-20' : 'w-64'}`}>
+      <div className={`p-6 border-b flex items-center ${isMinimized ? 'justify-center' : ''}`}>
+        {!isMinimized && <span className="text-2xl font-bold text-indigo-600">PUC Portal</span>}
       </div>
       <nav className="flex-1 px-4 py-4">
         {navItems.map(item => (
-          item.roles.includes(userRole) && (
+          (userRole === 'Super Admin' || item.roles.includes(userRole)) && (
             <a
               key={item.name}
               href="#"
@@ -133,59 +140,32 @@ const Sidebar = ({ setActiveView, activeView, userRole }) => {
                 activeView === item.name
                   ? 'bg-indigo-600 text-white shadow-md'
                   : 'text-gray-600 hover:bg-indigo-100'
-              }`}
+              } ${isMinimized ? 'justify-center' : ''}`}
             >
-              <item.icon className="w-5 h-5" />
-              <span className="ml-4 font-medium">{item.name}</span>
+              <item.icon className="w-5 h-5 flex-shrink-0" />
+              <span className={`ml-4 font-medium transition-opacity duration-200 ${isMinimized ? 'opacity-0 hidden' : 'opacity-100'}`}>{item.name}</span>
             </a>
           )
         ))}
       </nav>
       <div className="p-4 border-t">
-        <a href="#" className="flex items-center px-4 py-3 text-gray-600 hover:bg-indigo-100 rounded-lg">
-          <LogOut className="w-5 h-5" />
-          <span className="ml-4 font-medium">Logout</span>
-        </a>
+        <button 
+          onClick={() => setIsMinimized(!isMinimized)}
+          className={`flex items-center w-full px-4 py-3 text-gray-600 hover:bg-indigo-100 rounded-lg ${isMinimized ? 'justify-center' : ''}`}
+        >
+          {isMinimized ? <ChevronsRight className="w-5 h-5" /> : <ChevronsLeft className="w-5 h-5" />}
+          <span className={`ml-4 font-medium transition-opacity duration-200 ${isMinimized ? 'opacity-0 hidden' : 'opacity-100'}`}>Collapse</span>
+        </button>
       </div>
     </aside>
   );
 };
 
 // Header Component
-const Header = ({ userRole, setUserRole }) => {
-    const [dropdownOpen, setDropdownOpen] = useState(false);
-    const roles = ['Super Admin', 'Admin', 'Principal', 'HOD'];
-
+const Header = ({ userRole }) => {
     return (
-        <header className="bg-white shadow-md p-4 flex justify-between items-center">
+        <header className="bg-white shadow-md p-4 flex items-center">
             <h1 className="text-2xl font-semibold text-gray-800">Welcome, {userRole}</h1>
-            <div className="relative">
-                <button 
-                    onClick={() => setDropdownOpen(!dropdownOpen)}
-                    className="flex items-center bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600 transition-colors"
-                >
-                    <span>Change Role</span>
-                    <ChevronDown className="w-4 h-4 ml-2" />
-                </button>
-                {dropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-xl z-10">
-                        {roles.map(role => (
-                            <a
-                                key={role}
-                                href="#"
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    setUserRole(role);
-                                    setDropdownOpen(false);
-                                }}
-                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-100"
-                            >
-                                {role}
-                            </a>
-                        ))}
-                    </div>
-                )}
-            </div>
         </header>
     );
 };
