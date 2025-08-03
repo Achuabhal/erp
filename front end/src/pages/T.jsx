@@ -31,6 +31,9 @@ const FilterIcon = (props) => <Icon path="M22 3H2l8 9.46V19l4 2v-8.54L22 3z" {..
 const XIcon = (props) => <Icon path="M18 6 6 18M6 6l12 12" {...props} />;
 const TrophyIcon = (props) => <Icon path="M12 2L9 5H3v14h18V5h-6zM3 21h18M12 5v16" {...props} />;
 const AlertTriangleIcon = (props) => <Icon path="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01" {...props} />;
+const StarIcon = (props) => <Icon path="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" {...props} />;
+const ChevronLeftIcon = (props) => <Icon path="m15 19-7-7 7-7" {...props} />;
+const ChevronRightIcon = (props) => <Icon path="m9 5 7 7-7 7" {...props} />;
 
 
 // Mock Data for demonstration purposes
@@ -77,8 +80,8 @@ const mockData = {
         id: `STU${101 + i}`,
         name: `Student ${i + 1}`,
         avatar: `https://i.pravatar.cc/150?u=student${i}`,
-        attendance: Math.floor(Math.random() * 30 + 70),
-        marks: Math.floor(Math.random() * 60 + 40),
+        attendance: Math.floor(Math.random() * 50 + 50), // Attendance between 50-100
+        marks: Math.floor(Math.random() * 60 + 40), // Marks between 40-100
     })),
     assignments: [
         { id: 1, title: "API Design Document", submitted: 20, total: 25, deadline: "2025-08-10", late: 2 },
@@ -136,19 +139,17 @@ const tagClasses = "bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-
 // Main App Component: The root of the application
 const App = () => {
     const [activeView, setActiveView] = useState('dashboard');
-    const [isSidebarOpen, setSidebarOpen] = useState(false);
+    // Set initial sidebar state based on window width, allowing user override
+    const [isSidebarOpen, setSidebarOpen] = useState(window.innerWidth >= 768);
 
-    // Effect to handle responsive sidebar behavior
+    // Effect to handle responsive sidebar collapse on mobile
     useEffect(() => {
         const handleResize = () => {
-            if (window.innerWidth >= 768) {
-                setSidebarOpen(true);
-            } else {
+            if (window.innerWidth < 768) {
                 setSidebarOpen(false);
             }
         };
         window.addEventListener('resize', handleResize);
-        handleResize(); // Initial check on component mount
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
@@ -170,7 +171,7 @@ const App = () => {
         <div className="bg-gray-50 min-h-screen flex font-sans text-gray-800">
             <Sidebar activeView={activeView} setActiveView={setActiveView} isOpen={isSidebarOpen} setOpen={setSidebarOpen} />
             <div className={`flex-1 transition-all duration-300 md:ml-20 ${isSidebarOpen && 'md:ml-64'}`}>
-                <Header teacher={mockData.teacher} setSidebarOpen={setSidebarOpen} />
+                <Header teacher={mockData.teacher} isSidebarOpen={isSidebarOpen} setSidebarOpen={setSidebarOpen} />
                 <main className="p-4 md:p-6 lg:p-8">
                     {renderView()}
                 </main>
@@ -204,11 +205,11 @@ const Sidebar = ({ activeView, setActiveView, isOpen, setOpen }) => {
             {/* Overlay for mobile view when sidebar is open */}
             {isOpen && <div onClick={() => setOpen(false)} className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"></div>}
 
-            <aside className={`fixed top-0 left-0 h-full bg-white border-r border-gray-200 z-40 transition-transform duration-300 ease-in-out
+            <aside className={`fixed top-0 left-0 h-full bg-white border-r border-gray-200 z-40 transition-transform duration-300 ease-in-out flex flex-col
                 ${isOpen ? 'translate-x-0' : '-translate-x-full'}
                 md:translate-x-0 ${isOpen ? 'md:w-64' : 'md:w-20'}`}>
                 
-                <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200">
+                <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200 flex-shrink-0">
                     <div className={`flex items-center gap-2 font-bold text-xl text-indigo-600 transition-opacity ${!isOpen && 'md:opacity-0 md:pointer-events-none'}`}>
                         <img 
                             src="https://placehold.co/100x100/6366f1/ffffff?text=ERP" 
@@ -227,7 +228,7 @@ const Sidebar = ({ activeView, setActiveView, isOpen, setOpen }) => {
                     </button>
                 </div>
 
-                <nav className="mt-6 flex flex-col justify-between" style={{height: 'calc(100% - 4rem)'}}>
+                <nav className="mt-6 flex-grow overflow-y-auto">
                     <ul>
                         {navItems.map(item => (
                             <li key={item.id} className="px-3">
@@ -246,23 +247,24 @@ const Sidebar = ({ activeView, setActiveView, isOpen, setOpen }) => {
                             </li>
                         ))}
                     </ul>
-                     <div className={`w-full px-3 mb-4`}>
-                         <a
-                             href="#"
-                             className={`flex items-center px-4 py-3 my-1 rounded-lg transition-colors duration-200 text-gray-500 hover:bg-red-50 hover:text-red-600`}
-                         >
-                             <LogOutIcon className="w-5 h-5 flex-shrink-0" />
-                             <span className={`ml-4 whitespace-nowrap transition-opacity ${!isOpen && 'md:opacity-0 md:hidden'}`}>Logout</span>
-                         </a>
-                     </div>
                 </nav>
+                
+                <div className="flex-shrink-0 border-t border-gray-200 p-3">
+                    <a
+                        href="#"
+                        className={`flex items-center px-4 py-3 my-1 rounded-lg transition-colors duration-200 text-gray-500 hover:bg-red-50 hover:text-red-600`}
+                    >
+                        <LogOutIcon className="w-5 h-5 flex-shrink-0" />
+                        <span className={`ml-4 whitespace-nowrap transition-opacity ${!isOpen && 'md:opacity-0 md:hidden'}`}>Logout</span>
+                    </a>
+                </div>
             </aside>
         </>
     );
 };
 
 // Header Component: Displays user info, search, and notifications
-const Header = ({ teacher, setSidebarOpen }) => {
+const Header = ({ teacher, isSidebarOpen, setSidebarOpen }) => {
     const unreadCount = Array.isArray(mockData?.notifications)
         ? mockData.notifications.filter(n => !n.read).length
         : 0;
@@ -270,13 +272,25 @@ const Header = ({ teacher, setSidebarOpen }) => {
     return (
         <header className="sticky top-0 bg-white/80 backdrop-blur-sm z-20 border-b border-gray-200">
             <div className="flex items-center justify-between h-16 px-4 md:px-6">
-                 <button onClick={() => setSidebarOpen(true)} className="text-gray-500 md:hidden" aria-label="Open Menu">
-                     <MenuIcon />
-                 </button>
-                 <div className="relative hidden md:block">
-                     <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                     <input type="text" placeholder="Search students, subjects..." className="bg-gray-100 rounded-lg pl-10 pr-4 py-2 w-64 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-                 </div>
+                <div className="flex items-center gap-2">
+                    {/* Mobile Menu Button */}
+                    <button onClick={() => setSidebarOpen(true)} className="text-gray-500 md:hidden" aria-label="Open Menu">
+                        <MenuIcon className="w-6 h-6"/>
+                    </button>
+                    {/* Desktop Sidebar Toggle Button */}
+                    <button 
+                        onClick={() => setSidebarOpen(!isSidebarOpen)} 
+                        className="text-gray-500 hidden md:block p-2 rounded-full hover:bg-gray-100" 
+                        aria-label={isSidebarOpen ? "Minimize sidebar" : "Expand sidebar"}
+                    >
+                        {isSidebarOpen ? <ChevronLeftIcon className="w-5 h-5" /> : <ChevronRightIcon className="w-5 h-5" />}
+                    </button>
+                    {/* Search Bar */}
+                    <div className="relative hidden md:block">
+                        <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                        <input type="text" placeholder="Search students, subjects..." className="bg-gray-100 rounded-lg pl-10 pr-4 py-2 w-64 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                    </div>
+                </div>
                 <div className="flex items-center space-x-4">
                     <button className="relative text-gray-500 hover:text-gray-800" aria-label={`Notifications (${unreadCount} unread)`}>
                         <BellIcon />
@@ -719,71 +733,127 @@ const CommunicationTools = () => {
 const StudentPerformanceInsights = () => {
     const [filter, setFilter] = useState('all');
     
+    // Data for Pie Chart
+    const performanceDistribution = (() => {
+        const totalStudents = mockData.students.length;
+        const distribution = {
+            excellent: mockData.students.filter(s => s.marks >= 80).length,
+            good: mockData.students.filter(s => s.marks >= 60 && s.marks < 80).length,
+            average: mockData.students.filter(s => s.marks >= 40 && s.marks < 60).length,
+            poor: mockData.students.filter(s => s.marks < 40).length,
+        };
+        const percentages = {
+            excellent: (distribution.excellent / totalStudents) * 100,
+            good: (distribution.good / totalStudents) * 100,
+            average: (distribution.average / totalStudents) * 100,
+            poor: (distribution.poor / totalStudents) * 100,
+        };
+        return { distribution, percentages, totalStudents };
+    })();
+
+    const pieChartStyle = {
+        background: `conic-gradient(
+            #10B981 ${performanceDistribution.percentages.excellent}%, 
+            #3B82F6 0 ${performanceDistribution.percentages.excellent + performanceDistribution.percentages.good}%, 
+            #F59E0B 0 ${performanceDistribution.percentages.excellent + performanceDistribution.percentages.good + performanceDistribution.percentages.average}%, 
+            #EF4444 0 100%
+        )`
+    };
+
+    // Data for Bar Chart
+    const subjectAverages = [
+        { subject: 'Data Structures', avg: 82 },
+        { subject: 'Algorithms', avg: 75 },
+        { subject: 'Operating Systems', avg: 68 },
+        { subject: 'DBMS', avg: 71 },
+        { subject: 'Networks', avg: 65 },
+    ];
+
+    const topPerformers = mockData.students.sort((a, b) => b.marks - a.marks).slice(0, 3);
+    const needsAttention = mockData.students.filter(s => s.marks < 50 || s.attendance < 75).sort((a,b) => a.marks - b.marks).slice(0, 3);
+
     const filteredStudents = () => {
         switch(filter) {
             case 'low_attendance': return mockData.students.filter(s => s.attendance < 75);
-            case 'low_marks': return mockData.students.filter(s => s.marks < 50); // Adjusted for better filtering
+            case 'low_marks': return mockData.students.filter(s => s.marks < 50);
             default: return mockData.students;
         }
     }
 
     return (
         <div className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-               <Card className="lg:col-span-3">
-                 <h3 className="font-bold text-lg mb-4">Subject-wise Marks Distribution (Average)</h3>
-                 <div className="flex items-end h-64 space-x-4 p-4 border rounded-lg bg-gray-50">
-                   {['DSA', 'Algo', 'OS', 'DBMS', 'CN'].map((subject) => {
-                     const averageMark = Math.floor(Math.random() * 35 + 60); // Simulate average marks 60-95
-                     const barHeight = `${(averageMark / 100) * 100}%`;
-               
-                     return (
-                       <div key={subject} className="flex-1 flex flex-col items-center justify-end">
-                         <div
-                           className="w-full bg-indigo-500 rounded-t-lg hover:bg-indigo-600 transition-colors text-white flex items-center justify-center text-xs font-bold"
-                           style={{ height: barHeight }}
-                         >
-                           {averageMark}
-                         </div>
-                         <p className="text-xs mt-2">{subject}</p>
-                       </div>
-                     );
-                   })}
-                 </div>
-               </Card>
-               <Card className="lg:col-span-2">
-                 <h3 className="font-bold text-lg mb-4">At-Risk Students</h3>
-                 <p className="text-sm text-gray-500 mb-4">Low attendance or marks.</p>
-                 <div className="max-h-64 overflow-y-auto pr-2">
-                     <ul className="space-y-2">
-                         {mockData.students
-                             .filter(s => s.attendance < 80 || s.marks < 50)
-                             .slice(0, 5) // Show top 5 for brevity
-                             .map(s => (
-                                 <li
-                                     key={s.id}
-                                     className="flex items-center justify-between p-3 bg-red-50 border border-red-200 rounded-lg"
-                                 >
-                                     <div className="flex items-center gap-3">
-                                         <img
-                                             src={s.avatar}
-                                             alt={s.name}
-                                             className="w-8 h-8 rounded-full"
-                                         />
-                                         <div>
-                                             <p className="font-semibold">{s.name}</p>
-                                             <p className="text-xs text-red-700">
-                                                 Att: {s.attendance}% / Marks: {s.marks}
-                                             </p>
-                                         </div>
-                                     </div>
-                                     <button className={btnSecondarySmClasses}>Alert</button>
-                                 </li>
-                             ))}
-                     </ul>
-                 </div>
-               </Card>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <Card>
+                    <h3 className="font-bold text-lg mb-4">Overall Performance Distribution</h3>
+                    <div className="flex justify-center items-center h-64">
+                         <div className="relative w-48 h-48 rounded-full" style={pieChartStyle}>
+                            <div className="absolute inset-2 bg-gray-50 rounded-full flex items-center justify-center">
+                               <span className="text-2xl font-bold">{performanceDistribution.totalStudents}</span>
+                               <span className="text-sm text-gray-500 ml-1">Students</span>
+                            </div>
+                        </div>
+                    </div>
+                     <div className="mt-4 flex justify-center flex-wrap gap-x-4 gap-y-2 text-sm">
+                        <span className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-emerald-500"></span>Excellent</span>
+                        <span className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-blue-500"></span>Good</span>
+                        <span className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-amber-500"></span>Average</span>
+                        <span className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-red-500"></span>Poor</span>
+                    </div>
+                </Card>
+                <Card>
+                    <h3 className="font-bold text-lg mb-4">Subject-wise Average Marks</h3>
+                    <div className="space-y-4 h-64 flex flex-col justify-around p-4">
+                        {subjectAverages.map(item => (
+                            <div key={item.subject} className="flex items-center gap-4">
+                                <span className="w-32 text-sm text-gray-600 truncate">{item.subject}</span>
+                                <div className="flex-1 bg-gray-200 rounded-full h-4">
+                                    <div 
+                                        className="bg-indigo-500 h-4 rounded-full flex items-center justify-end pr-2 text-white text-xs font-bold" 
+                                        style={{ width: `${item.avg}%` }}
+                                    >
+                                        {item.avg}%
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </Card>
             </div>
+             <Card>
+                <h3 className="font-bold text-lg mb-4">Student Highlights</h3>
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 className="font-semibold text-green-600 mb-2">Top Performers</h4>
+                        <ul className="space-y-2">
+                            {topPerformers.map(s => (
+                                <li key={s.id} className="flex items-center gap-3 p-2 bg-green-50 rounded-lg">
+                                    <img src={s.avatar} alt={s.name} className="w-8 h-8 rounded-full" />
+                                    <div>
+                                        <p className="font-semibold text-sm">{s.name}</p>
+                                        <p className="text-xs text-gray-500">Marks: {s.marks} | Att: {s.attendance}%</p>
+                                    </div>
+                                    <StarIcon className="w-5 h-5 ml-auto text-yellow-400 fill-current" />
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                     <div className="border-t md:border-t-0 md:border-l pt-4 md:pt-0 md:pl-6">
+                        <h4 className="font-semibold text-red-600 mb-2">Students Needing Attention</h4>
+                        <ul className="space-y-2">
+                            {needsAttention.map(s => (
+                                <li key={s.id} className="flex items-center gap-3 p-2 bg-red-50 rounded-lg">
+                                    <img src={s.avatar} alt={s.name} className="w-8 h-8 rounded-full" />
+                                    <div>
+                                        <p className="font-semibold text-sm">{s.name}</p>
+                                        <p className="text-xs text-gray-500">Marks: {s.marks} | Att: {s.attendance}%</p>
+                                    </div>
+                                    <button className={`${btnSecondarySmClasses} !text-xs !py-0.5 ml-auto`}>Notify</button>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                 </div>
+            </Card>
             <Card>
                 <div className="flex justify-between items-center mb-4">
                     <h3 className="font-bold text-lg">Student List</h3>
