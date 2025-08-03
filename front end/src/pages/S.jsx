@@ -39,7 +39,7 @@ import {
   AlertTriangle,
   Info,
   ToggleLeft,
-  ToggleRight,
+  ToggleRight,GraduationCap,
 } from "lucide-react";
 
 // Mock Data
@@ -1751,13 +1751,26 @@ export default function App() {
       }`}
     >
       <div
-        className={`flex items-center justify-between p-4 border-b h-16 ${
+        className={`flex items-center justify-between p-4 border-b h-24 ${
           isSidebarOpen ? "" : "justify-center"
         }`}
       >
-        {isSidebarOpen && (
-          <h1 className="text-xl font-bold text-blue-600">Student ERP</h1>
-        )}
+      {isSidebarOpen ? (
+  <div className="flex items-center gap-2 pl-4 pt-4">
+    <GraduationCap className="w-8 h-8 text-blue-600" strokeWidth={2} />
+    <h1 className="!text-2xl font-semibold text-gray-900 leading-tight mt-[-2px]">
+  Student <br /> ERP
+</h1>
+
+  </div>
+) : (
+  <div className="flex justify-center pt-4">
+    <GraduationCap className="w-8 h-8 text-blue-600" strokeWidth={2.2} />
+  </div>
+)}
+
+
+
         <button
           onClick={() => setSidebarOpen(!isSidebarOpen)}
           className="p-1 rounded-full hover:bg-gray-100 hidden lg:block"
@@ -1789,11 +1802,13 @@ export default function App() {
   );
 
   return (
-    <div className="flex h-screen bg-gray-50 font-sans">
+
+<div className="flex h-screen bg-gray-50 font-sans">
       {/* Desktop Sidebar */}
-      <div className="hidden lg:block">
-        <Sidebar items={menuItems} />
-      </div>
+      <div className="hidden lg:flex  lg:w-64 lg:flex-col lg:h-full lg:bg-white lg:shadow">
+  <Sidebar items={menuItems} />
+</div>
+
 
       {/* Mobile Sidebar */}
       <div
@@ -1817,7 +1832,7 @@ export default function App() {
       </div>
 
       <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="flex items-center justify-between p-4 bg-white border-b h-16">
+        <header className="flex items-center justify-between p-4 bg-white border-b h-24">
           <div className="flex items-center">
             <button
               onClick={() => setMobileMenuOpen(true)}

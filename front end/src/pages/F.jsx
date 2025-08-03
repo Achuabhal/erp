@@ -1634,13 +1634,30 @@ case "Audit History":
       }`}
     >
       <div
-        className={`flex items-center justify-between p-4 border-b h-16 ${
+        className={`flex items-center justify-between p-4 border-b h-26 ${
           isSidebarOpen ? "" : "justify-center"
         }`}
       >
-        {isSidebarOpen && (
-          <h1 className="text-xl font-bold text-blue-600">Fee Management ERP</h1>
+
+
+        {isSidebarOpen ? (
+          <div className="flex items-center gap-2 pl-4 pt-4">
+            <Wallet  className="w-8 h-8 text-blue-600" strokeWidth={2} />
+            <h1 className="!text-2xl font-semibold text-gray-900 leading-tight mt-[-3px]">
+          Fee Management <br /> ERP
+        </h1>
+        
+          </div>
+        ) : (
+          <div className="flex justify-center pt-4">
+            <Wallet  className="w-8 h-8 text-blue-600" strokeWidth={2.2} />
+          </div>
         )}
+
+
+
+
+
         <button
           onClick={() => setSidebarOpen(!isSidebarOpen)}
           className="p-1 rounded-full hover:bg-gray-100 hidden lg:block"
@@ -1700,7 +1717,7 @@ case "Audit History":
       </div>
 
       <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="flex items-center justify-between p-4 bg-white border-b h-16">
+        <header className="flex items-center justify-between p-4 bg-white border-b h-26">
           <div className="flex items-center">
             <button
               onClick={() => setMobileMenuOpen(true)}
