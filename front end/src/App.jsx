@@ -9,6 +9,7 @@ import Admission from "./pages/admission";
 import SUPER from "./pages/superadmin"
 import ADMIN from "./pages/admin";
 import APPLY from "./pages/apply";
+import Q from "./pages/quiz";
 // Import your pages
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
         <Route path="/super" element={<SUPER/>} />
         <Route path="/admin" element={<ADMIN/>} />
         <Route path="/apply" element={<APPLY/>} />
+        <Route path="/q" element={<Q/>} />
         {/* Add more routes as needed */}
 
       </Routes>
