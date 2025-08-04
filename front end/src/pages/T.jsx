@@ -687,6 +687,17 @@ const MarksAndExamUploads = () => (
 
 // Communication Tools View: Messaging and Announcements
 const CommunicationTools = () => {
+    const [files, setFiles] = useState([]);
+    const fileInputRef = React.useRef(null);
+
+    const handleFileChange = (event) => {
+        setFiles(prevFiles => [...prevFiles, ...Array.from(event.target.files)]);
+    };
+
+    const removeFile = (fileName) => {
+        setFiles(prevFiles => prevFiles.filter(file => file.name !== fileName));
+    };
+
     return (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[75vh]">
             <Card className="lg:col-span-2 flex flex-col">
@@ -722,7 +733,41 @@ const CommunicationTools = () => {
                         <option>Target: CS-B</option>
                     </select>
                     <textarea placeholder="Message..." className={`${inputFieldClasses} w-full h-24`}></textarea>
-                    <button className={`${btnPrimaryClasses} w-full`}>Post Announcement</button>
+                    
+                    {/* File Attachment Section */}
+                    <div className="space-y-2">
+                        {files.length > 0 && (
+                            <div className="p-2 border rounded-lg">
+                                <p className="text-xs font-semibold mb-1">Attachments:</p>
+                                {files.map((file, index) => (
+                                    <div key={index} className="flex items-center justify-between bg-gray-100 p-1 rounded text-xs">
+                                        <span className="truncate">{file.name}</span>
+                                        <button onClick={() => removeFile(file.name)} className="text-red-500 hover:text-red-700">
+                                            <XIcon className="w-3 h-3"/>
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                    
+                    <div className="flex items-center gap-2">
+                        <input 
+                            type="file" 
+                            multiple 
+                            ref={fileInputRef} 
+                            onChange={handleFileChange} 
+                            className="hidden"
+                        />
+                        <button 
+                            type="button" 
+                            onClick={() => fileInputRef.current.click()} 
+                            className={`${btnSecondaryClasses} w-full`}
+                        >
+                            <PaperclipIcon className="w-4 h-4 mr-2"/> Attach Files
+                        </button>
+                        <button className={`${btnPrimaryClasses} w-full`}>Post</button>
+                    </div>
                 </div>
             </Card>
         </div>
