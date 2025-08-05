@@ -26,7 +26,7 @@ function App() {
         <Route path="/super" element={<SUPER/>} />
         <Route path="/admin" element={<ADMIN/>} />
         <Route path="/apply" element={<APPLY/>} />
-        <Route path="/qu" element={<Q/>} />
+        <Route path="/qus" element={<Q/>} />
         {/* Add more routes as needed */}
 
       </Routes>
